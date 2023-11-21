@@ -1147,24 +1147,36 @@ int CChar::Fight_CalcDamage( const CItem * pWeapon, bool bNoRandom, bool bGetMax
 			case 1:
 			{
 				// pre-AOS damage bonus
+				// Tactics bonus: -50% to +50% damage based on Tactics skill
 				iDmgBonus += (Skill_GetBase(SKILL_TACTICS) - 500) / 10;
 
+				// Anatomy bonus: +0% to +20% (+10% with 100.0) damage based on Anatomy skill
 				iDmgBonus += Skill_GetBase(SKILL_ANATOMY) / 50;
-				if ( Skill_GetBase(SKILL_ANATOMY) >= 1000 )
+				if (Skill_GetBase(SKILL_ANATOMY) >= 1000)
 					iDmgBonus += 10;
 
-				if ( pWeapon != nullptr && pWeapon->IsType(IT_WEAPON_AXE) )
+				// Lumberjack bonus: +0% to +20% (+10% with 100.0) damage based on Lumberjack skill
+				if (pWeapon != nullptr && pWeapon->IsType(IT_WEAPON_AXE))
 				{
 					iDmgBonus += Skill_GetBase(SKILL_LUMBERJACKING) / 50;
-					if ( Skill_GetBase(SKILL_LUMBERJACKING) >= 1000 )
+					if (Skill_GetBase(SKILL_LUMBERJACKING) >= 1000)
 						iDmgBonus += 10;
 				}
 
+				// Stat bonus
 				if ( !iStatBonus )
 					iStatBonus = STAT_STR;
+
+				// Stat bonus: +0% to +20% damage based on STR (+1% each 5 points)
 				if ( !iStatBonusPercent )
-					iStatBonusPercent = 20;
-				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				{
+					iDmgBonus += Stat_GetAdjusted(iStatBonus) / 5;
+				}
+				else
+				{
+					iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				}
+
 				break;
 			}
 
