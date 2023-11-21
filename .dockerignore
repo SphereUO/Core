@@ -1,0 +1,11 @@
+/tests
+/utilities
+/docs
+
+.idea
+
+Dockerfile
+appveyor.yml
+Changelog.txt
+LICENSE
+README.md
