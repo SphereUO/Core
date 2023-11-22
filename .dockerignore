@@ -1,8 +1,12 @@
+/build
 /tests
 /utilities
 /docs
 
+.github
+.git
 .idea
+.gitignore
 
 Dockerfile
 appveyor.yml
