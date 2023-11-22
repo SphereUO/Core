@@ -1,6 +1,6 @@
 FROM gcc:latest AS build
 
-RUN apt-get update && apt-get install -y libmariadb3 libmariadb-dev cmake
+RUN apt-get update && apt-get install -y git libmariadb3 libmariadb-dev cmake
 
 WORKDIR /app
 
