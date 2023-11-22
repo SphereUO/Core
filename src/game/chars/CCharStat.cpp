@@ -250,9 +250,9 @@ ushort CChar::Stat_GetMax( STAT_TYPE i ) const
 	ADDTOCALLSTACK("CChar::Stat_GetMax");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
 
-    ushort uiVal;
 	if ( m_Stat[i].m_max < 1 )
 	{
+		ushort uiVal;
 		if ( i == STAT_FOOD )
 		{
 			const CCharBase * pCharDef = Char_GetDef();
@@ -260,18 +260,28 @@ ushort CChar::Stat_GetMax( STAT_TYPE i ) const
             uiVal = pCharDef->m_MaxFood;
 		}
 		else
-            uiVal = Stat_GetAdjusted(i);
-
-		if ( i == STAT_INT )
 		{
-			if ( (g_Cfg.m_iRacialFlags & RACIALF_ELF_WISDOM) && IsElf() )
-                uiVal += 20;		// elves always have +20 max mana (Wisdom racial trait)
-		}
+			// MaxHits = 50 + (Str/2)
+			if ( i == STAT_STR )
+			{
+				uiVal = 50 + (Stat_GetAdjusted(i) / 2);
+			} 
+			else
+			{
+				uiVal = Stat_GetAdjusted(i);
+			}
+
+			if ( i == STAT_INT )
+			{
+				if ( (g_Cfg.m_iRacialFlags & RACIALF_ELF_WISDOM) && IsElf() )
+					uiVal += 20;		// elves always have +20 max mana (Wisdom racial trait)
+			}
+		}      
+
 		return uiVal;
 	}
 
-    uiVal = m_Stat[i].m_max;
-	return uiVal;
+	return m_Stat[i].m_max;
 }
 
 ushort CChar::Stat_GetMaxAdjusted( STAT_TYPE i ) const
