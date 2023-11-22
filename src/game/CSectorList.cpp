@@ -25,25 +25,22 @@ void CSectorList::Init()
 
 	if ( _fInitialized )	//	disable changes on-a-fly
 		return;
+
 	// Initialize sector data for every map plane
 	TemporaryString ts;
 	TemporaryString tsConcat;
 	
 	for (int iMap = 0; iMap < MAP_SUPPORTED_QTY; ++iMap)
 	{
+		if (!g_MapList.IsMapSupported(iMap))
+			continue;
+
 		/*
 			Before iSectorIndex was declared and set to 0 outside the FOR, so I moved it inside because
 			we need to (re)set iSectorIndex to 0 when Sphere finish to initialize every sectors in a map, otherwise
 			iSectorIndex will have the same value of iSectorQty when Sphere finish loading map0.
 		*/
 		int iSectorIndex = 0;
-
-		MapSectorsData& sd = _SectorData[iMap];
-		sd._iSectorSize = sd._iSectorColumns = sd._iSectorRows = sd._iSectorQty = 0;
-		sd._pSectors.release();
-
-		if (!g_MapList.IsMapSupported(iMap))
-			continue;
 
 		const int iSectorQty = g_MapList.CalcSectorQty(iMap);
 		const int iMaxX = g_MapList.CalcSectorCols(iMap);
@@ -52,6 +49,7 @@ void CSectorList::Init()
 		snprintf(ts.buffer(), ts.capacity(), " map%d=%d", iMap, iSectorQty);
 		Str_ConcatLimitNull(tsConcat.buffer(), ts.buffer(), tsConcat.capacity());
 
+		MapSectorsData& sd  = _SectorData[iMap];
 		sd._pSectors		= std::make_unique<CSector[]>(iSectorQty);
 		sd._iSectorSize		= g_MapList.GetSectorSize(iMap);
 		sd._iSectorQty		= iSectorQty;
@@ -70,7 +68,6 @@ void CSectorList::Init()
 			ASSERT(pSector);
 			pSector->Init(iSectorIndex, (uchar)iMap, iSectorX, iSectorY);
 		}
-		
 	}
 
 	for (MapSectorsData& sd : _SectorData)

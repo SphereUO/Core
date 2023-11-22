@@ -1,9 +1,9 @@
 version: "3"
 services:
   sphereserver:
-    image: sphereuo
-    #pull_policy: always
-    container_name: sphereuo
+    image: raylde/sphereuo
+    pull_policy: always
+    container_name: raylde/sphereuo
     tty: true
     stdin_open: true
     ports:
