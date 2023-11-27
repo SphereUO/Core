@@ -1735,33 +1735,34 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 		case SPELL_Ale:		// 90 = drunkeness ?
 		case SPELL_Wine:	// 91 = mild drunkeness ?
 		case SPELL_Liquor:	// 92 = extreme drunkeness ?
-		{
-			// Chance to get sober quickly
-			if (10 > Calc_GetRandVal(100))
-				--iCharges;
-
-			Stat_AddVal(STAT_INT, -1);
-			Stat_AddVal(STAT_DEX, -1);
-
-			if ( !Calc_GetRandVal(3) )
 			{
-				Speak(g_Cfg.GetDefaultMsg(DEFMSG_SPELL_ALCOHOL_HIC));
-				if ( !IsStatFlag(STATF_ONHORSE) )
+				// Chance to get sober quickly
+				if (10 > Calc_GetRandVal(100))
+					--iCharges;
+
+				Stat_AddVal(STAT_INT, -1);
+				Stat_AddVal(STAT_DEX, -1);
+
+				if ( !Calc_GetRandVal(3) )
 				{
-					UpdateDir( (DIR_TYPE)Calc_GetRandVal(8) );
-					UpdateAnimate(ANIM_BOW);
+					Speak(g_Cfg.GetDefaultMsg(DEFMSG_SPELL_ALCOHOL_HIC));
+					if ( !IsStatFlag(STATF_ONHORSE) )
+					{
+						UpdateDir( (DIR_TYPE)Calc_GetRandVal(8) );
+						UpdateAnimate(ANIM_BOW);
+					}
 				}
 			}
-		}
-		break;
+			break;
 
 		case SPELL_Regenerate:
-		{
-			if (iCharges <=0 || iLevel <= 0)
-				return false;
-			iSecondsDelay = 2;
-			iEffect = g_Cfg.GetSpellEffect(spell, iLevel);
-		}	break;
+			{
+				if (iCharges <=0 || iLevel <= 0)
+					return false;
+				iSecondsDelay = 2;
+				iEffect = g_Cfg.GetSpellEffect(spell, iLevel);
+			}	
+			break;
 
 		case SPELL_Hallucination:
 		{
@@ -1882,8 +1883,16 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 				GetClientActive()->removeBuff(BI_POISON);
 				GetClientActive()->addBuff(BI_POISON, 1017383, 1070722, (word)(pItem->GetTimerSAdjusted()));
 			}
-			break;
 		}
+		break;
+
+		case SPELL_Explosion:
+		{
+			iEffect = iLevel;
+			iDmgType = DAMAGE_MAGIC | DAMAGE_FIRE;	
+			Effect(EFFECT_OBJ, ITEMID_FX_EXPLODE_3, pItem->m_uidLink.CharFind(), 10, 16);	
+		}
+		break;
 
 		case SPELL_Strangle:
 		{
@@ -2028,6 +2037,10 @@ CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEff
 		if ( layer == LAYER_SPELL_STATS && spell != pSpellPrev->m_itSpell.m_spell && IsSetMagicFlags(MAGICF_STACKSTATS) )
 			continue;
 
+		// If spell is explosion and there's already an explosion timer, dont remove it
+		if ( spell == SPELL_Explosion && layer == LAYER_SPELL_Explosion )
+			continue;
+
 		pSpellPrev->Delete();
 		break;
 	}
@@ -2043,6 +2056,7 @@ CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEff
 		case LAYER_FLAG_Drunk:			pSpell->SetName("Drunk Effect");			break;
 		case LAYER_FLAG_Hallucination:	pSpell->SetName("Hallucination Effect");	break;
 		case LAYER_FLAG_Murders:		pSpell->SetName("Murder Decay");			break;
+		case LAYER_SPELL_Explosion: 	pSpell->SetName("Explosion Timer");			break;
 		default:						break;
 	}
 
@@ -3854,6 +3868,12 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 				iEffectID = ITEMID_NOTHING;
                 iSound = SOUND_NONE;
             }
+			break;
+
+		case SPELL_Explosion:
+			// if not a potion and have duration, create effect
+			if (!fPotion && iDuration > 0)
+				Spell_Effect_Create( SPELL_Explosion, LAYER_SPELL_Explosion, iEffect, iDuration, pCharSrc );
 			break;
 
 		case SPELL_Invis:
