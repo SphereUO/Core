@@ -3083,26 +3083,17 @@ do_default:
             sVal.FormatUSVal( Stat_GetVal(STAT_FOOD) );
             break;
 		case CHC_MAXFOOD:
-			sVal.FormatUSVal( Stat_GetMaxAdjusted(STAT_FOOD) );
+			sVal.FormatUSVal( Stat_GetMax(STAT_FOOD) );
 			break;
 		case CHC_MAXHITS:
 			sVal.FormatUSVal( Stat_GetMaxAdjusted(STAT_STR) );
 			break;
-        case CHC_OMAXHITS:
-            sVal.FormatUSVal( Stat_GetMax(STAT_STR) );
-            break;
 		case CHC_MAXMANA:
 			sVal.FormatUSVal( Stat_GetMaxAdjusted(STAT_INT) );
 			break;
-        case CHC_OMAXMANA:
-            sVal.FormatUSVal( Stat_GetMax(STAT_INT) );
-            break;
 		case CHC_MAXSTAM:
 			sVal.FormatUSVal( Stat_GetMaxAdjusted(STAT_DEX) );
 			break;
-        case CHC_OMAXSTAM:
-            sVal.FormatUSVal( Stat_GetMax(STAT_DEX) );
-            break;
         case CHC_MODMAXHITS:
             sVal.FormatVal( Stat_GetMaxMod(STAT_STR) );
             break;
@@ -3450,22 +3441,19 @@ bool CChar::r_LoadVal( CScript & s )
         case CHC_MODMAXHITS:
             Stat_SetMaxMod(STAT_STR, s.GetArgSVal());
             break;
-		case CHC_MAXHITS:   // In the save files OMaxHits is stored as MaxHits (for backwards compatibility)
-        case CHC_OMAXHITS:
+		case CHC_MAXHITS:
             Stat_SetMax(STAT_STR, s.GetArgUSVal());
             break;
         case CHC_MODMAXSTAM:
             Stat_SetMaxMod(STAT_DEX, s.GetArgSVal());
             break;
-        case CHC_MAXSTAM:   // In the save files OMaxStam is stored as MaxStam (for backwards compatibility)
-        case CHC_OMAXSTAM:
+        case CHC_MAXSTAM:
             Stat_SetMax(STAT_DEX, s.GetArgUSVal());
             break;
         case CHC_MODMAXMANA:
             Stat_SetMaxMod(STAT_INT, s.GetArgSVal());
             break;
-        case CHC_MAXMANA:   // In the save files OMaxMana is stored as MaxMana (for backwards compatibility)
-        case CHC_OMAXMANA:
+        case CHC_MAXMANA:
             Stat_SetMax(STAT_INT, s.GetArgUSVal());
             break;
 		case CHC_ACCOUNT:
@@ -4016,22 +4004,31 @@ void CChar::r_Write( CScript & s )
 		}
 	}
 
+	// Hits
 	if ((iVal = Stat_GetMaxMod(STAT_STR)) != 0)
 		s.WriteKeyVal("MODMAXHITS", iVal);
-	if ((iVal = Stat_GetMax(STAT_STR)) != Stat_GetAdjusted(STAT_STR))
-		s.WriteKeyVal("MAXHITS", iVal);     // should be OMAXHITS, but we keep it like this for backwards compatibility
+
+	if (m_Stat[STAT_STR].m_max != 0)  //only if max is different from default
+		s.WriteKeyVal("MAXHITS", Stat_GetVal(STAT_STR));     // should be OMAXHITS, but we keep it like this for backwards compatibility
+
 	s.WriteKeyVal("HITS", Stat_GetVal(STAT_STR));
 
+	// Stam
 	if ((iVal = Stat_GetMaxMod(STAT_DEX)) != 0)
 		s.WriteKeyVal("MODMAXSTAM", iVal);
-	if ((iVal = Stat_GetMax(STAT_DEX)) != Stat_GetAdjusted(STAT_DEX))
-		s.WriteKeyVal("MAXSTAM", iVal);     // should be OMAXSTAM, but we keep it like this for backwards compatibility
+
+	if (m_Stat[STAT_DEX].m_max != 0)  //only if max is different from default
+		s.WriteKeyVal("MAXSTAM", Stat_GetVal(STAT_DEX));
+
 	s.WriteKeyVal("STAM", Stat_GetVal(STAT_DEX));
 
+	//Mana
 	if ((iVal = Stat_GetMaxMod(STAT_INT)) != 0)
 		s.WriteKeyVal("MODMAXMANA", iVal);
-	if ((iVal = Stat_GetMax(STAT_INT)) != Stat_GetAdjusted(STAT_INT))
-		s.WriteKeyVal("MAXMANA", iVal);     // should be OMAXMANA, but we keep it like this for backwards compatibility
+
+	if (m_Stat[STAT_INT].m_max != 0)  //only if max is different from default
+		s.WriteKeyVal("MAXMANA", Stat_GetMax(STAT_INT));
+
 	s.WriteKeyVal("MANA", Stat_GetVal(STAT_INT));
 
 	static constexpr lpctstr _ptcKeyRegen[STAT_QTY] =
