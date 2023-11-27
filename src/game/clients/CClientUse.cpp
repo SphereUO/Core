@@ -154,6 +154,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 
 		case IT_SHAFT:
 		case IT_FEATHER:
+		case IT_FLETCHING:
 			return Skill_Menu(SKILL_BOWCRAFT, "sm_bolts", pItem->GetID());
 
 		case IT_FISH_POLE:	// Just be near water ?
