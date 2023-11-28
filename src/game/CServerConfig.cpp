@@ -253,6 +253,7 @@ CServerConfig::CServerConfig()
     m_bAutoResDisp          = true;
 	m_iAutoPrivFlags = 0;
 
+	_iEra = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitGear = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitLoot = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitProps = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
@@ -515,6 +516,7 @@ enum RC_TYPE
 	RC_DUNGEONLIGHT,
 	RC_EMOTEFLAGS,				// m_iEmoteFlags
 	RC_EQUIPPEDCAST,			// m_fEquippedCast
+	RC_ERA,						// _iEra
     RC_ERALIMITGEAR,			// _iEraLimitGear
     RC_ERALIMITLOOT,			// _iEraLimitLoot
     RC_ERALIMITPROPS,			// _iEraLimitProps
@@ -786,6 +788,7 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "DUNGEONLIGHT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightDungeon)			}},
 	{ "EMOTEFLAGS",				{ ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,m_iEmoteFlags)			}},
 	{ "EQUIPPEDCAST",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fEquippedCast)			}},
+	{ "ERA",					{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEra)					}},
 	{ "ERALIMITGEAR",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitGear)			}},
 	{ "ERALIMITLOOT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitLoot)			}},
 	{ "ERALIMITPROPS",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitProps)			}},

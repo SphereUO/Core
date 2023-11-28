@@ -507,6 +507,7 @@ public:
 	bool m_bAutoResDisp;        // Set account RESDISP automatically based on player client version.
 	int  m_iAutoPrivFlags;      // Default setting for new accounts specifying default priv level.
 
+    RESDISPLAY_VERSION _iEra;	        // Era of the content (softcoded).
 	RESDISPLAY_VERSION _iEraLimitGear;	// Don't allow to create gear newer than the given era (softcoded).
 	RESDISPLAY_VERSION _iEraLimitLoot;	// Don't allow to create loot newer than the given era (softcoded).
 	RESDISPLAY_VERSION _iEraLimitProps;	// Don't allow to have properties newer than the given era.
