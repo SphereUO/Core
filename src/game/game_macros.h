@@ -12,6 +12,7 @@
 // Macro for fast NoCrypt Client version check
 #define IsAosFlagEnabled( value )	( g_Cfg.m_iFeatureAOS & (value) )
 #define IsResClient( value )		( GetAccount()->GetResDisp() >= (value) )
+#define IsEraEnabled( value )		( g_Cfg._iEra >= (value) )
 
 
 /*  Numeric macros  */
