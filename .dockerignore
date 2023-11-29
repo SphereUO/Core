@@ -1,0 +1,14 @@
+/build
+/tests
+/utilities
+/docs
+
+.github
+.idea
+.gitignore
+
+Dockerfile
+appveyor.yml
+Changelog.txt
+LICENSE
+README.md

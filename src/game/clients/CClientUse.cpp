@@ -154,6 +154,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 
 		case IT_SHAFT:
 		case IT_FEATHER:
+		case IT_FLETCHING:
 			return Skill_Menu(SKILL_BOWCRAFT, "sm_bolts", pItem->GetID());
 
 		case IT_FISH_POLE:	// Just be near water ?
@@ -645,7 +646,7 @@ bool CClient::Skill_Menu(SKILL_TYPE skill, lpctstr skillmenu, ITEMID_TYPE itemus
 	Args.m_VarsLocal.SetNumNew("ItemUsed", itemused);
 	if (IsTrigUsed(TRIGGER_SKILLMENU))
 	{
-		if (m_pChar->Skill_OnCharTrigger(skill, CTRIG_SkillMenu, &Args) == TRIGRET_RET_TRUE)
+		if (m_pChar->OnTrigger(CTRIG_SkillMenu, m_pChar, &Args) == TRIGRET_RET_TRUE )
 			return true;
 
 		skillmenu = Args.m_VarsLocal.GetKeyStr("Skillmenu", false);

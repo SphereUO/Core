@@ -183,7 +183,6 @@ bool CCharBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 		//return as decimal number or 0 if not set
 		case CBC_FOLLOWERSLOTS:
 		case CBC_MAXFOLLOWER:
-		case CBC_BONDED:
 		case CBC_TITHING:
 			sVal.FormatLLVal(GetDefNum(ptcKey));
 			break;
@@ -342,7 +341,6 @@ bool CCharBase::r_LoadVal( CScript & s )
 		//Set as number only
 		case CBC_FOLLOWERSLOTS:
 		case CBC_MAXFOLLOWER:
-		case CBC_BONDED:
 		case CBC_TITHING:
 			SetDefNum(s.GetKey(), s.GetArgVal(), false);
 			break;

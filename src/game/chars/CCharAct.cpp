@@ -1306,6 +1306,13 @@ void CChar::UpdateMove( const CPointMap & ptOld, CClient * pExcludeClient, bool 
 		m_fStatusUpdate &= ~SU_UPDATE_MODE;
 
 	EXC_TRY("UpdateMove");
+	// if skill is meditation, cancel it if we move
+    if (g_Cfg._bMeditationMovementAbort && Skill_GetActive() == SKILL_MEDITATION)
+    {
+        //cancel meditation if we move
+        Skill_Fail(true);
+    }
+
 	EXC_SET_BLOCK("FOR LOOP");
 	ClientIterator it;
 	for ( CClient* pClient = it.next(); pClient != nullptr; pClient = it.next() )
@@ -2940,7 +2947,7 @@ bool CChar::SetPoisonCure( bool fExtra )
 
 // SPELL_Poison
 // iSkill = 0-1000 = how bad the poison is.
-// iHits = how much times the poison will hit. Irrelevant with MAGIFC_OSIFORMULAS enabled, because defaults will be used.
+// iHits = how much times the poison will hit. Only used in pre-T2A era.
 // Physical attack of poisoning.
 bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 {
@@ -2964,7 +2971,8 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 		return false;
 	LayerAdd(pPoison, LAYER_FLAG_Poison);
 
-	if (!IsSetMagicFlags(MAGICF_OSIFORMULAS))
+	// Use custom logic for poison if pre-T2A
+	if (IsEra(RESDISPLAY_VERSION::RDS_PRET2A))
 	{
 		//pPoison->m_itSpell.m_spellcharges has already been set by Spell_Effect_Create (and it's equal to iSkill)
 		pPoison->m_itSpell.m_spellcharges = iHits;
@@ -3009,13 +3017,11 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 			CItem* pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen);
 			if (pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 			{
-				++pPoison->m_itSpell.m_spelllevel;	// Effect 2: next poison will have one additional level of poison, this makes sense only with MAGICF_OSIFORMULAS enabled.
+				++pPoison->m_itSpell.m_spelllevel;	// Effect 2: next poison will have one additional level of poison
 				pEvilOmen->Delete();
 			}
 		}
 	}
-
-
 
 	CClient *pClient = GetClientActive();
 	if ( pClient && IsSetOF(OF_Buffs) )
@@ -3427,7 +3433,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 				return nullptr;
 
 			uiStamReq = 10;		// Stam consume for push the char. OSI seem to be 10% and not a fix 10
-			if ( IsPriv(PRIV_GM) || pChar->IsStatFlag(STATF_DEAD) || (pChar->IsStatFlag(STATF_INVISIBLE|STATF_HIDDEN) && !(g_Cfg.m_iRevealFlags & REVEALF_OSILIKEPERSONALSPACE)) )
+			if ( IsPriv(PRIV_GM) || pChar->IsStatFlag(STATF_DEAD) || (pChar->IsStatFlag(STATF_INVISIBLE|STATF_HIDDEN) && !(IsRevealFlagEnabled(REVEALF_OSILIKEPERSONALSPACE))) )
 				uiStamReq = 0;	// On SPHERE, need 0 stam to reveal someone
 			else if ( (pPoly && pPoly->m_itSpell.m_spell == SPELL_Wraith_Form) && (GetTopMap() == 0) )		// chars under Wraith Form effect can always walk through chars in Felucca
 				uiStamReq = 0;
@@ -3465,8 +3471,9 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 				return nullptr;
 			}
 
-			else if (pChar->IsStatFlag(STATF_INVISIBLE | STATF_HIDDEN) ) {
-				if ((g_Cfg.m_iRevealFlags & REVEALF_OSILIKEPERSONALSPACE))
+			else if (pChar->IsStatFlag(STATF_INVISIBLE | STATF_HIDDEN) ) 
+			{
+				if (IsRevealFlagEnabled(REVEALF_OSILIKEPERSONALSPACE))
 					// OSILIKEPERSONALSPACE flag block the reveal but DEFMSG_HIDING_STUMBLE_OSILIKE is send. To avoid it, simply use return 1 in @PERSONALSPACE
 					snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_HIDING_STUMBLE_OSILIKE));
 				else

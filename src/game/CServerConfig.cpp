@@ -196,6 +196,7 @@ CServerConfig::CServerConfig()
 	_uiExperimentalFlags= 0;
 	_uiOptionFlags		= (OF_Command_Sysmsgs|OF_NoHouseMuteSpeech);
 	_uiAreaFlags		= AREAF_RoomInheritsFlags;
+	_bMeditationMovementAbort = false;
 
 	m_iMaxSkill			= SKILL_QTY;
 	m_iWalkBuffer		= 15;
@@ -252,6 +253,7 @@ CServerConfig::CServerConfig()
     m_bAutoResDisp          = true;
 	m_iAutoPrivFlags = 0;
 
+	_iEra = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitGear = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitLoot = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
 	_iEraLimitProps = RESDISPLAY_VERSION(RDS_QTY - 1); // Always latest by default
@@ -514,6 +516,7 @@ enum RC_TYPE
 	RC_DUNGEONLIGHT,
 	RC_EMOTEFLAGS,				// m_iEmoteFlags
 	RC_EQUIPPEDCAST,			// m_fEquippedCast
+	RC_ERA,						// _iEra
     RC_ERALIMITGEAR,			// _iEraLimitGear
     RC_ERALIMITLOOT,			// _iEraLimitLoot
     RC_ERALIMITPROPS,			// _iEraLimitProps
@@ -591,6 +594,7 @@ enum RC_TYPE
 	RC_MAXSIZECLIENTOUT,		// _uiMaxSizeClientOut
 	RC_MAXSIZEPERTICK,			// _uiNetMaxLengthPerTick
 	RC_MD5PASSWORDS,			// m_fMd5Passwords
+	RC_MEDITATIONMOVEMENTABORT,  // _bMeditationMovementAbort
 	RC_MEDIUMCANHEARGHOSTS,		// m_iMediumCanHearGhosts
 	RC_MINCHARDELETETIME,
 	RC_MINKARMA,				// m_iMinKarma
@@ -699,6 +703,7 @@ enum RC_TYPE
 	RC_QTY
 };
 
+// NOTE: Need to be alphabetized order
 const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 {
 	{ "ACCTFILES",				{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sAcctBaseDir)			}},
@@ -783,6 +788,7 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "DUNGEONLIGHT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightDungeon)			}},
 	{ "EMOTEFLAGS",				{ ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,m_iEmoteFlags)			}},
 	{ "EQUIPPEDCAST",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fEquippedCast)			}},
+	{ "ERA",					{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEra)					}},
 	{ "ERALIMITGEAR",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitGear)			}},
 	{ "ERALIMITLOOT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitLoot)			}},
 	{ "ERALIMITPROPS",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_iEraLimitProps)			}},
@@ -860,6 +866,7 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "MAXSIZECLIENTOUT",		{ ELEM_INT64,	static_cast<uint>OFFSETOF(CServerConfig,_iMaxSizeClientOut)		}},
 	{ "MAXSIZEPERTICK",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,_uiNetMaxLengthPerTick)	}},
 	{ "MD5PASSWORDS",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fMd5Passwords) 		}},
+	{ "MEDITATIONMOVEMENTABORT",{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,_bMeditationMovementAbort)	}},
 	{ "MEDIUMCANHEARGHOSTS",	{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iMediumCanHearGhosts)	}},
 	{ "MINCHARDELETETIME",		{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iMinCharDeleteTime)	}},
 	{ "MINKARMA",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iMinKarma)				}},
@@ -1419,8 +1426,9 @@ bool CServerConfig::r_LoadVal( CScript &s )
 		case RC_WALKBUFFER:
 			m_iWalkBuffer = s.GetArgVal() * MSECS_PER_TENTH;
 			break;
-
-
+        case RC_MEDITATIONMOVEMENTABORT:
+            _bMeditationMovementAbort = s.GetArgVal() > 0 ? true : false;
+            break;
 		default:
 			return( sm_szLoadKeys[i].m_elem.SetValStr( this, s.GetArgRaw()));
 	}

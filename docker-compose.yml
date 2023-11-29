@@ -1,0 +1,17 @@
+version: "3"
+services:
+  sphereserver:
+    image: raylde/sphereuo
+    pull_policy: always
+    container_name: raylde/sphereuo
+    tty: true
+    stdin_open: true
+    ports:
+      - 2593:2593
+    volumes:
+      - ./sphere.ini:/app/sphere.ini
+      - ./accounts:/app/accounts
+      - ./logs:/app/logs
+      - ./mul:/app/mul
+      - ./save:/app/save
+      - ./scripts:/app/scripts

@@ -1034,7 +1034,8 @@ void CChar::Use_Drink( CItem * pItem )
 		OnSpellEffect((SPELL_TYPE)(RES_GET_INDEX(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
 
 		// Give me the marker that i've used a potion.
-		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_PotionUsed, g_Cfg.GetSpellEffect(SPELL_NONE, iSkillQuality), 150, this);
+		// TODO: based on UO, only heal potion have cooldown. So need to add possibility to set cooldown for each potion type.
+		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_PotionUsed, g_Cfg.GetSpellEffect(SPELL_NONE, iSkillQuality), 100, this);
 	}
 	else if ( pItem->IsType(IT_DRINK) && IsSetOF(OF_DrinkIsFood) )
 	{

@@ -617,12 +617,13 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, int iCureLevel, 
 		return (Calc_GetRandVal(100) <= iCureChance);
 	}
 
-	if (!IsSetMagicFlags(MAGICF_OSIFORMULAS))
+	if (IsEra(RESDISPLAY_VERSION::RDS_PRET2A)) // pre-T2A formula 
 	{
 		iCureChance = Calc_GetSCurve(iCureLevel - iPoisonLevel, 100);
 		return (Calc_GetRandVal(1000) <= iCureChance);
 	}
-	//If we use MAGICF_OSIFORMULAS, the poison level is in the 0-4+ range.
+
+	//If we use the pre-AOS formula, we don't need to check for the AOS formula.
 	if (!iPoisonLevel) //Lesser Poison (iPoisonLevel 0) is always cured no matter the potion or spell/skill level value
 		return true;
 

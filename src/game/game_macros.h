@@ -10,7 +10,6 @@
 /*  Parametric macros  */
 
 // Macro for fast NoCrypt Client version check
-#define IsAosFlagEnabled( value )	( g_Cfg.m_iFeatureAOS & (value) )
 #define IsResClient( value )		( GetAccount()->GetResDisp() >= (value) )
 
 
