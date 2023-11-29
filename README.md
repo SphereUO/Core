@@ -13,7 +13,7 @@ Join to our Discord server
 [![Discord Shield](https://discordapp.com/api/guilds/354358315373035542/widget.png?style=shield)](https://discord.gg/YkwwzwJGam)
 
 ### Downloads
-+ <a href="https://github.com/SphereUO/Scripts-X">Scripts</a>
++ <a href="https://github.com/SphereUO/Scripts">Scripts</a>
 
 ## Key Changes
 + Core changes based on ERA or custom.
