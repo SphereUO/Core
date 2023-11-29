@@ -9,6 +9,10 @@
 
 SphereUO aims to enhance Ultima Online mechanics across different eras while providing extensive customization through its scripting language (SCP).
 
+Join to our Discord server
+<br>
+[![Discord Shield](https://discordapp.com/api/guilds/354358315373035542/widget.png?style=shield)](https://discord.gg/YkwwzwJGam)
+
 ### Downloads
 + <a href="https://github.com/SphereUO/Scripts-X">Scripts</a>
 
