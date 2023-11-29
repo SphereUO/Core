@@ -2947,7 +2947,7 @@ bool CChar::SetPoisonCure( bool fExtra )
 
 // SPELL_Poison
 // iSkill = 0-1000 = how bad the poison is.
-// iHits = how much times the poison will hit. Irrelevant with MAGIFC_OSIFORMULAS enabled, because defaults will be used.
+// iHits = how much times the poison will hit. Only used in pre-T2A era.
 // Physical attack of poisoning.
 bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 {
