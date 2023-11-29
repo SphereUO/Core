@@ -1,4 +1,12 @@
 # SphereUO
+[![Build](https://github.com/SphereUO/Core/actions/workflows/build.yml/badge.svg)](https://github.com/SphereUO/Core/actions/workflows/build.yml)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/20225/badge.svg)](https://scan.coverity.com/projects/sphereserver-source-x)
+[![GitHub issues](https://img.shields.io/github/issues/SphereUO/Core..svg)](https://github.com/SphereUO/Core./issues)
+<br>
+[![GitHub stars](https://img.shields.io/github/stars/SphereUO/Core.?logo=github)](https://github.com/SphereUO/Core./stargazers)
+[![GitHub repo size](https://img.shields.io/github/repo-size/SphereUO/Core.svg)](https://github.com/SphereUO/Core./)
+[![GitHub last commit](https://img.shields.io/github/last-commit/SphereUO/Core..svg)](https://github.com/SphereUO/Core./)
+
 SphereUO aims to enhance Ultima Online mechanics across different eras while providing extensive customization through its scripting language (SCP).
 
 ### Downloads
