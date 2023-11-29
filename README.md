@@ -1,6 +1,7 @@
 # SphereUO
 [![Build](https://github.com/SphereUO/Core/actions/workflows/build.yml/badge.svg)](https://github.com/SphereUO/Core/actions/workflows/build.yml)
 [![GitHub issues](https://img.shields.io/github/issues/SphereUO/Core.svg)](https://github.com/SphereUO/Core/issues)
+[![CodeQL](https://github.com/SphereUO/Core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SphereUO/Core/actions/workflows/codeql.yml)
 <br>
 [![GitHub stars](https://img.shields.io/github/stars/SphereUO/Core?logo=github)](https://github.com/SphereUO/Core/stargazers)
 [![GitHub repo size](https://img.shields.io/github/repo-size/SphereUO/Core.svg)](https://github.com/SphereUO/Core/)
