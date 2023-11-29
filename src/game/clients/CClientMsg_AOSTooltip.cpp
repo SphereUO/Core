@@ -414,7 +414,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		t->FormatArgs("%" PRId64, ArtifactRarity);
 	}
 
-	int64 UsesRemaining = pItem->GetDefNum("USESCUR", true);
+	int64 UsesRemaining = pItem->GetDefNum("UsesCur", true);
 	if (UsesRemaining > 0)
 	{
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060584)); // uses remaining: ~1_val~
