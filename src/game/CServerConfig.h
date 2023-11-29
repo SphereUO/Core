@@ -1105,14 +1105,15 @@ typedef std::map<dword,dword> KRGumpsMap;
 } g_Cfg;
 
 
-#define IsAosFlagEnabled( value )	( g_Cfg.m_iFeatureAOS & (value) )
-#define IsSetEF(ef)				    ((g_Cfg._uiExperimentalFlags & ef) != 0)
-#define IsSetOF(of)				    ((g_Cfg._uiOptionFlags & of) != 0)
-#define IsRevealFlagEnabled(value)  ((g_Cfg.m_iRevealFlags & value) != 0)
-#define IsSetCombatFlags(of)	    ((g_Cfg.m_iCombatFlags & of) != 0)
-#define IsSetMagicFlags(of)		    ((g_Cfg.m_iMagicFlags & of) != 0)
-#define IsEraEnabled( value )	    ( g_Cfg._iEra >= (value) )
-#define IsEra( value )	            ( g_Cfg._iEra == (value) )
+#define IsAosFlagEnabled( value )	        ( g_Cfg.m_iFeatureAOS & (value) )
+#define IsSetEF(ef)				            ((g_Cfg._uiExperimentalFlags & ef) != 0)
+#define IsSetOF(of)				            ((g_Cfg._uiOptionFlags & of) != 0)
+#define IsRevealFlagEnabled(value)          ((g_Cfg.m_iRevealFlags & value) != 0)
+#define IsSetCombatFlags(of)	            ((g_Cfg.m_iCombatFlags & of) != 0)
+#define IsSetMagicFlags(of)		            ((g_Cfg.m_iMagicFlags & of) != 0)
+#define IsCombatParryingFlagEnabled(value)  ((g_Cfg.m_iCombatParryingEra & value) != 0)
+#define IsEraEnabled( value )	            ( g_Cfg._iEra >= (value) )
+#define IsEra( value )	                    ( g_Cfg._iEra == (value) )
 
 
 #endif	// _INC_CSERVERCONFIG_H

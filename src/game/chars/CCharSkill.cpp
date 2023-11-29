@@ -223,9 +223,8 @@ void CChar::Skill_SetBase( SKILL_TYPE skill, ushort uiValue )
 	}
 
 	// We need to update the AC given by the Shield when parrying increase.
-	if (skill == SKILL_PARRYING && g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
-	{
-		
+	if (skill == SKILL_PARRYING && IsCombatParryingFlagEnabled(PARRYERA_ARSCALING))
+	{	
 		m_defense = (word)CalcArmorDefense();
 		fUpdateStats = true;
 	}
