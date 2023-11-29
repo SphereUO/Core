@@ -145,6 +145,11 @@ public:
     void beginTransaction(int priority);	// begin a transaction for grouping packets
     void endTransaction(void);				// end transaction
 
+	inline bool operator==(const CNetState& other) const
+    {
+        return m_id == other.m_id;
+    }
+
     friend class CNetworkManager;
     friend class CNetworkThread;
     friend class CNetworkInput;

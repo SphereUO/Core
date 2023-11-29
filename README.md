@@ -1,6 +1,7 @@
 # SphereUO
 [![Build](https://github.com/SphereUO/Core/actions/workflows/build.yml/badge.svg)](https://github.com/SphereUO/Core/actions/workflows/build.yml)
 [![GitHub issues](https://img.shields.io/github/issues/SphereUO/Core.svg)](https://github.com/SphereUO/Core/issues)
+[![CodeQL](https://github.com/SphereUO/Core/actions/workflows/codeql.yml/badge.svg)](https://github.com/SphereUO/Core/actions/workflows/codeql.yml)
 <br>
 [![GitHub stars](https://img.shields.io/github/stars/SphereUO/Core?logo=github)](https://github.com/SphereUO/Core/stargazers)
 [![GitHub repo size](https://img.shields.io/github/repo-size/SphereUO/Core.svg)](https://github.com/SphereUO/Core/)
@@ -13,7 +14,7 @@ Join to our Discord server
 [![Discord Shield](https://discordapp.com/api/guilds/354358315373035542/widget.png?style=shield)](https://discord.gg/YkwwzwJGam)
 
 ### Downloads
-+ <a href="https://github.com/SphereUO/Scripts-X">Scripts</a>
++ <a href="https://github.com/SphereUO/Scripts">Scripts</a>
 
 ## Key Changes
 + Core changes based on ERA or custom.

@@ -3068,7 +3068,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 		{
 			int64 amount = s.GetArgLLVal();
 			SetDefNum(s.GetKey(), amount, false);
-			CVarDefCont * pVar = GetDefKey("Usescur", true);
+			CVarDefCont * pVar = GetDefKey("UsesCur", true);
 			if (!pVar)
 				SetDefNum("UsesCur", amount, false);
 		}	break;

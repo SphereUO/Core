@@ -525,8 +525,8 @@ int CChar::CalcArmorDefense() const
 					See: http://web.archive.org/web/20000306210936/http://uo.stratics.com:80/parr.htm
 					Else, CombatParryingEra flag PARRYERA_SCALING is disabled and only a flat 7% AR of the shield will be used.
 					*/
-					BODYPART_TYPE shieldZone = ARMOR_HANDS;
-					if (g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
+					BODYPART_TYPE shieldZone = ARMOR_HANDS;			
+					if (IsCombatParryingFlagEnabled(PARRYERA_ARSCALING))
 					{
 						shieldZone = ARMOR_SHIELD;
 						int uShieldAC = ((Skill_GetBase(SKILL_PARRYING) * iDefense) / 2000) + 1;
@@ -591,7 +591,7 @@ int CChar::CalcArmorDefense() const
 		 break;
 	 case LAYER_HAND2:	//By default Shields get a 7% armor coverage, if PARRYERA_ARSCALING is enabled they get a 100% armor coverage.
 		 iPercentArmorDefence = sm_ArmorLayers[5].m_iCoverage;
-		 if (g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
+		 if (IsCombatParryingFlagEnabled(PARRYERA_ARSCALING))
 		 {
 			 iPercentArmorDefence = sm_ArmorLayers[8].m_iCoverage;
 		 }
@@ -861,7 +861,8 @@ effect_bounce:
 		if ( pSpellDef && pSpellDef->GetPrimarySkill(&iSpellSkill) )
 			iDisturbChance = pSpellDef->m_Interrupt.GetLinear(Skill_GetBase((SKILL_TYPE)iSpellSkill));
 
-		if ( iDisturbChance && fElemental && !pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED) ) //If Protection spell has SPELLFLAG_SCRIPTED don't make this check.
+		//If COMBAT_ELEMENTAL is enabled, protection spell has SPELLFLAG_SCRIPTED don't make this check.
+		if ( iDisturbChance && fElemental && !pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED) ) 
 		{
 			// Protection spell can cancel the disturb
 			CItem *pProtectionSpell = LayerFind(LAYER_SPELL_Protection);
@@ -924,15 +925,10 @@ effect_bounce:
 			{
 				if ( GetTopDist3D(pSrc) < 2 )
 				{
-					CItem* pReactive = LayerFind(LAYER_SPELL_Reactive);
-					
+					CItem* pReactive = LayerFind(LAYER_SPELL_Reactive);		
 					if (pReactive)
 					{
-						int iReactiveDamage = (iDmg * pReactive->m_itSpell.m_PolyStr) / 100;
-						if (iReactiveDamage < 1)
-						{
-							iReactiveDamage = 1;
-						}
+						int iReactiveDamage = maximum(1, (iDmg * pReactive->m_itSpell.m_PolyStr) / 100);
 
 						iDmg -= iReactiveDamage;
 						pSrc->OnTakeDamage(iReactiveDamage, this, (DAMAGE_TYPE)(DAMAGE_FIXED | DAMAGE_REACTIVE), iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy,(SPELL_TYPE)pReactive->m_itSpell.m_spell);
@@ -2008,7 +2004,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 				SysMessageDefault(DEFMSG_COMBAT_PARRY);
 
 			//If we are using the Samurai Empire Formula and we are not wearing a shield also raise Bushido.
-			if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && g_Cfg.m_iCombatParryingEra & PARRYERA_SEFORMULA && !pCharTarg->IsStatFlag(STATF_HASSHIELD))
+			if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && IsCombatParryingFlagEnabled(PARRYERA_SEFORMULA) && !pCharTarg->IsStatFlag(STATF_HASSHIELD))
 				pCharTarg->Skill_Experience(SKILL_BUSHIDO, iParryChance);
 
 			int iParryDamageChance = (int)(Args.m_VarsLocal.GetKeyNum("ItemParryDamageChance"));
@@ -2024,8 +2020,6 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 				iDmg -= IMulDiv(iDmg, iParryReduction, 100);
 		}
 	}
-
-	
 
 	CScriptTriggerArgs Args(iDmg, iDmgType, pWeapon);
 	Args.m_VarsLocal.SetNum("ItemDamageChance", 25);

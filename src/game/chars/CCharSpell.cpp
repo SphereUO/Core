@@ -3558,6 +3558,59 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		iSound = sm_DrinkSounds[Calc_GetRandVal(ARRAY_COUNT(sm_DrinkSounds))];
 	}
 
+	if ( pSpellDef->IsSpellType(SPELLFLAG_DAMAGE))
+	{
+        if (!pCharSrc)
+        {
+            iEffect *= ((iSkillLevel * 3) / 1000) + 1;
+        }
+        else
+        {
+			// AOS Spell Damage Increase bonus
+			if (IsEraEnabled(RESDISPLAY_VERSION::RDS_AOS))
+			{
+				// Evaluating Intelligence mult
+				iEffect *= ((pCharSrc->Skill_GetBase(SKILL_EVALINT) * 3) / 1000) + 1;
+
+				// Spell Damage Increase bonus
+				int DamageBonus = (int)(pCharSrc->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESPELLDAM, true));
+				if (m_pPlayer && pCharSrc->m_pPlayer && DamageBonus > 15)		// Spell Damage Increase is capped at 15% on PvP
+					DamageBonus = 15;
+
+				// INT bonus
+				DamageBonus += pCharSrc->Stat_GetAdjusted(STAT_INT) / 10;
+
+				// Inscription bonus
+				DamageBonus += pCharSrc->Skill_GetBase(SKILL_INSCRIPTION) / 100;
+
+				// Racial Bonus (Berserk), gargoyles gains +3% Spell Damage Increase per each 20 HP lost
+				if ((g_Cfg.m_iRacialFlags & RACIALF_GARG_BERSERK) && IsGargoyle())
+				{
+					int iInc = 3 * ((Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR)) / 20);
+					DamageBonus += minimum(iInc, 12);		// value is capped at 12%
+				}
+
+				iEffect += ((iEffect * DamageBonus) / 100);
+			}
+			else
+			{
+				// pre-aos formula
+				ushort casterEI = pCharSrc->Skill_GetBase(SKILL_EVALINT);
+				ushort targetMR = Skill_GetBase(SKILL_MAGICRESISTANCE);
+
+				ushort damageBonus = 0;
+				if( casterEI > targetMR )
+					damageBonus += (casterEI - targetMR) / 50;
+				else
+					damageBonus += (casterEI - targetMR) / 20;
+
+				// magery damage bonus, -25% at 0 skill, +0% at 100 skill, +5% at 120 skill
+				damageBonus += (pCharSrc->Skill_GetBase(SKILL_MAGERY) - 1000) / 40;
+
+				iEffect += ((iEffect * damageBonus) / 100);
+			}
+        }
+	}
 
 	// Check if the spell is being resisted
 	ushort uiResist = 0;
@@ -3570,8 +3623,11 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			uiSecond = uiResist  - uiSecond;
 		else
 			uiSecond = 0;
+
 		uchar uiResistChance = (uchar)(maximum(uiFirst, uiSecond));
-		uiResist = Skill_UseQuick(SKILL_MAGICRESISTANCE, uiResistChance, true, false) ? 25 : 0;	// If we successfully resist then we have a 25% damage reduction, 0 if we don't.
+
+		static const ushort sm_ResistanceDamageReduction = 50; // 50% damage reduction if resisted
+		uiResist = Skill_UseQuick(SKILL_MAGICRESISTANCE, uiResistChance, true, false) ? sm_ResistanceDamageReduction : 0;
 
 		if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 		{
@@ -3579,40 +3635,6 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			if ( pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 				uiResist /= 2;	// Effect 3: Only 50% of magic resistance used in next resistable spell.
 		}
-	}
-
-	//Spell damagae bonus if ERA T2A is enabled
-	if ( pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) && IsEraEnabled(RESDISPLAY_VERSION::RDS_PRET2A))
-	{
-        if (!pCharSrc)
-        {
-            iEffect *= ((iSkillLevel * 3) / 1000) + 1;
-        }
-        else
-        {
-            // Evaluating Intelligence mult
-            iEffect *= ((pCharSrc->Skill_GetBase(SKILL_EVALINT) * 3) / 1000) + 1;
-
-            // Spell Damage Increase bonus
-            int DamageBonus = (int)(pCharSrc->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESPELLDAM, true));
-            if (m_pPlayer && pCharSrc->m_pPlayer && DamageBonus > 15)		// Spell Damage Increase is capped at 15% on PvP
-                DamageBonus = 15;
-
-            // INT bonus
-            DamageBonus += pCharSrc->Stat_GetAdjusted(STAT_INT) / 10;
-
-            // Inscription bonus
-            DamageBonus += pCharSrc->Skill_GetBase(SKILL_INSCRIPTION) / 100;
-
-            // Racial Bonus (Berserk), gargoyles gains +3% Spell Damage Increase per each 20 HP lost
-            if ((g_Cfg.m_iRacialFlags & RACIALF_GARG_BERSERK) && IsGargoyle())
-            {
-                int iInc = 3 * ((Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR)) / 20);
-                DamageBonus += minimum(iInc, 12);		// value is capped at 12%
-            }
-
-            iEffect += ((iEffect * DamageBonus) / 100);
-        }
 	}
 
 	CScriptTriggerArgs Args((int)(spell), iSkillLevel, pSourceItem);
@@ -3729,15 +3751,17 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	if (pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED))
 		return true;
 
+	// if uiResist > 0, the spell was resisted and effect should be reduced
+	if ( uiResist > 0 )
+	{
+		SysMessageDefault( DEFMSG_RESISTMAGIC );
+		iEffect -= iEffect * uiResist / 100;
+		if ( iEffect < 0 )
+			iEffect = 0;	//May not do damage, but aversion should be created from the target.
+	}
+
 	if ( pSpellDef->IsSpellType( SPELLFLAG_DAMAGE ) )
 	{
-		if ( uiResist > 0 )
-		{
-			SysMessageDefault( DEFMSG_RESISTMAGIC );
-			iEffect -= iEffect * uiResist / 100;
-			if ( iEffect < 0 )
-				iEffect = 0;	//May not do damage, but aversion should be created from the target.
-		}
 		if ( !iDmgType )
 		{
 			switch ( spell )

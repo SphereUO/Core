@@ -236,9 +236,9 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	ADDTOCALLSTACK("CServerConfig::Calc_CombatChanceToParry");
 	// Check if target will block the hit
 	// Legacy pre-SE formula
-	const bool fCanShield = g_Cfg.m_iCombatParryingEra & PARRYERA_SHIELDBLOCK;
-	const bool fCanOneHanded = g_Cfg.m_iCombatParryingEra & PARRYERA_ONEHANDBLOCK;
-	const bool fCanTwoHanded = g_Cfg.m_iCombatParryingEra & PARRYERA_TWOHANDBLOCK;
+	const bool fCanShield = IsCombatParryingFlagEnabled(PARRYERA_SHIELDBLOCK);
+	const bool fCanOneHanded = IsCombatParryingFlagEnabled(PARRYERA_ONEHANDBLOCK);
+	const bool fCanTwoHanded = IsCombatParryingFlagEnabled(PARRYERA_TWOHANDBLOCK);
 
 	const int iParrying = pChar->Skill_GetBase(SKILL_PARRYING);
 	/*
@@ -246,7 +246,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	to gain parrying skill when his combination of weapon/shield does not match the values set in the CombatParryingEra  in the sphere.ini.
 	*/
 	int iParryChance = -1;
-	if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && g_Cfg.m_iCombatParryingEra & PARRYERA_SEFORMULA )   // Samurai Empire formula
+	if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && IsCombatParryingFlagEnabled(PARRYERA_SEFORMULA) )   // Samurai Empire formula
 	{
 		const int iBushido = pChar->Skill_GetBase(SKILL_BUSHIDO);
 		int iChanceSE = 0, iChanceLegacy = 0;
@@ -297,6 +297,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	{
 		if (fCanShield && pChar->IsStatFlag(STATF_HASSHIELD))	// parry using shield
 		{
+			// 25% chance to parry with shield
 			pItemParry = pChar->LayerFind(LAYER_HAND2);
 			iParryChance = iParrying / 40;
 		}
@@ -322,15 +323,14 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	if (iParryChance < 0)
 		return 0;
 
+	// Reduce parry chance is dex is lower than 80
 	int iDex = pChar->Stat_GetAdjusted(STAT_DEX);
 	if (iDex < 80)
 	{
-		const float fDexMod = (80 - iDex) / 100.0f;
-		iParryChance = int((float)iParryChance * (1.0f - fDexMod));
+		iParryChance -= (iParryChance * (80 - iDex)) / 100;
 	}
 
 	return iParryChance;
-
 }
 
 int CServerConfig::Calc_FameKill( CChar * pKill )

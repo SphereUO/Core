@@ -848,6 +848,11 @@ public:
         return m_net;
     }
 
+	inline bool operator==(const CClient& other) const
+    {
+        return (m_net == other.m_net);
+    }
+
 public:
 	char		m_zLastMessage[SCRIPT_MAX_LINE_LEN];	// last sysmessage
 	char		m_zLastObjMessage[SCRIPT_MAX_LINE_LEN];	// last message

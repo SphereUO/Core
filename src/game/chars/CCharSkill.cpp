@@ -223,9 +223,8 @@ void CChar::Skill_SetBase( SKILL_TYPE skill, ushort uiValue )
 	}
 
 	// We need to update the AC given by the Shield when parrying increase.
-	if (skill == SKILL_PARRYING && g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
-	{
-		
+	if (skill == SKILL_PARRYING && IsCombatParryingFlagEnabled(PARRYERA_ARSCALING))
+	{	
 		m_defense = (word)CalcArmorDefense();
 		fUpdateStats = true;
 	}
@@ -2193,6 +2192,7 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 		SysMessageDefault( DEFMSG_TAMING_YMASTER );
 		return -SKTRIG_QTY;
 	}
+	
 	if ( pChar->m_pPlayer )
 	{
 		SysMessageDefault( DEFMSG_TAMING_CANT );
@@ -2201,7 +2201,7 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 
 	CSkillDef* pSkillDef = g_Cfg.GetSkillDef(SKILL_TAMING);
 	if (pSkillDef->m_Range <= 0)
-		pSkillDef->m_Range = 10;
+		pSkillDef->m_Range = 6; // default value
 
 	if ( GetTopDist3D(pChar) > pSkillDef->m_Range)
 	{
@@ -2229,11 +2229,9 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 
 		/* An NPC cannot be tamed if:
 			Its Taming skill is equal to 0.
-			Its Animal Lore is above 0 (no reason why, this is probably an old check)
 			It's ID is either one of the playable characters (Human, Elf or Gargoyle).
 		*/
-		if ( !iTameBase || pChar->Skill_GetBase(SKILL_ANIMALLORE) || 
-			pChar->IsPlayableCharacter())
+		if ( !iTameBase || pChar->IsPlayableCharacter())
 		{
 			SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TAMING_TAMED ), pChar->GetName());
 			return -SKTRIG_QTY;
@@ -2242,13 +2240,13 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 		if (IsSetOF(OF_PetSlots))
 		{
 			short iFollowerSlots = (short)pChar->GetDefNum("FOLLOWERSLOTS", true, 1);
+			// Check if we have enough slots to tame this creature
 			if (!FollowersUpdate(pChar, maximum(0, iFollowerSlots), true))
 			{
 				SysMessageDefault(DEFMSG_PETSLOTS_TRY_TAMING);
 				return -SKTRIG_QTY;
 			}
-		}
-		
+		}	
 	}
 
 	if ( stage == SKTRIG_START )
