@@ -861,7 +861,8 @@ effect_bounce:
 		if ( pSpellDef && pSpellDef->GetPrimarySkill(&iSpellSkill) )
 			iDisturbChance = pSpellDef->m_Interrupt.GetLinear(Skill_GetBase((SKILL_TYPE)iSpellSkill));
 
-		if ( iDisturbChance && fElemental && !pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED) ) //If Protection spell has SPELLFLAG_SCRIPTED don't make this check.
+		//If COMBAT_ELEMENTAL is enabled, protection spell has SPELLFLAG_SCRIPTED don't make this check.
+		if ( iDisturbChance && fElemental && !pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED) ) 
 		{
 			// Protection spell can cancel the disturb
 			CItem *pProtectionSpell = LayerFind(LAYER_SPELL_Protection);
@@ -924,15 +925,10 @@ effect_bounce:
 			{
 				if ( GetTopDist3D(pSrc) < 2 )
 				{
-					CItem* pReactive = LayerFind(LAYER_SPELL_Reactive);
-					
+					CItem* pReactive = LayerFind(LAYER_SPELL_Reactive);		
 					if (pReactive)
 					{
-						int iReactiveDamage = (iDmg * pReactive->m_itSpell.m_PolyStr) / 100;
-						if (iReactiveDamage < 1)
-						{
-							iReactiveDamage = 1;
-						}
+						int iReactiveDamage = maximum(1, (iDmg * pReactive->m_itSpell.m_PolyStr) / 100);
 
 						iDmg -= iReactiveDamage;
 						pSrc->OnTakeDamage(iReactiveDamage, this, (DAMAGE_TYPE)(DAMAGE_FIXED | DAMAGE_REACTIVE), iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy,(SPELL_TYPE)pReactive->m_itSpell.m_spell);
