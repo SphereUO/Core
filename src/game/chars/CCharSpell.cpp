@@ -1405,7 +1405,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Clumsy:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 8 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100) - (Skill_GetBase(SKILL_MAGICRESISTANCE) / 100);
 				}
@@ -1436,7 +1436,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Feeblemind:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
                 {
                     wStatEffectRef = 8 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100) - (Skill_GetBase(SKILL_MAGICRESISTANCE) / 100);
                 }
@@ -1453,7 +1453,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Weaken:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 8 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100) - (Skill_GetBase(SKILL_MAGICRESISTANCE) / 100);
 				}
@@ -1471,7 +1471,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 		case SPELL_Curse:
 		case SPELL_Mass_Curse:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 8 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100) - (Skill_GetBase(SKILL_MAGICRESISTANCE) / 100);
 				}
@@ -1524,7 +1524,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Agility:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 1 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100);
 				}
@@ -1541,7 +1541,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Cunning:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 1 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100);
 				}
@@ -1556,7 +1556,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Strength:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 1 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100);
 				}
@@ -1571,7 +1571,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;
 		case SPELL_Bless:
 			{
-				if ( pCaster != nullptr && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+				if ( pCaster != nullptr )
 				{
                     wStatEffectRef = 1 + (pCaster->Skill_GetBase(SKILL_EVALINT) / 100);
 				}
@@ -1592,8 +1592,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			{
 				if ( pCaster != nullptr )
 				{
-					if ( IsSetMagicFlags(MAGICF_OSIFORMULAS) )
-						 wStatEffectRef = (400 + pCaster->Skill_GetBase(SKILL_EVALINT) - Skill_GetBase(SKILL_MAGICRESISTANCE)) / 10;
+					wStatEffectRef = (400 + pCaster->Skill_GetBase(SKILL_EVALINT) - Skill_GetBase(SKILL_MAGICRESISTANCE)) / 10;
 
 					if ( wStatEffectRef > Stat_GetVal(STAT_INT) )
                         wStatEffectRef = (word)(Stat_GetVal(STAT_INT));
@@ -1786,7 +1785,9 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 			// The poison in your body is having an effect.
 			if (iCharges <= 0)
 				return false;
-			if (IsSetMagicFlags(MAGICF_OSIFORMULAS))
+
+			// enable the OSI poison effect if the era is greather than T2A
+			if (IsEraEnabled(RESDISPLAY_VERSION::RDS_T2A))
 			{
 				// m_itSpell.m_spelllevel = level of the poison ! 0-4
 				switch (iLevel)
@@ -3580,7 +3581,8 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		}
 	}
 
-	if ( pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) && IsSetMagicFlags(MAGICF_OSIFORMULAS))
+	//Spell damagae bonus if ERA T2A is enabled
+	if ( pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) && IsEraEnabled(RESDISPLAY_VERSION::RDS_PRET2A))
 	{
         if (!pCharSrc)
         {
@@ -3818,7 +3820,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 		case SPELL_Poison:
 		case SPELL_Poison_Field:
-			if ( pCharSrc && IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+			if ( pCharSrc )
             {
 				iEffect = (iSkillLevel + pCharSrc->Skill_GetBase(SKILL_POISONING)) / 2;		// (magery + poisoning) / 2
             }
@@ -3894,7 +3896,8 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		case SPELL_Mana_Vamp:
 		{
 			int iMax = Stat_GetVal(STAT_INT);
-			if ( IsSetMagicFlags(MAGICF_OSIFORMULAS) )
+
+			if ( IsEraEnabled(RESDISPLAY_VERSION::RDS_AOS) )
 			{
 				// AOS formula
 				iSkillLevel = (pCharSrc->Skill_GetBase(SKILL_EVALINT) - Skill_GetBase(SKILL_MAGICRESISTANCE)) / 10;
@@ -4084,10 +4087,10 @@ int64 CChar::GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharS
 	ADDTOCALLSTACK("CChar::GetSpellDuration");
 	int64 iDuration = -1;   // tenths of second
     /*
-    * Duration calcs, do selective durations for magery spells if MagicF_OSIFormulas is enabled
+    * Duration calcs, do selective durations for magery spells if era RDS_T2A is enabled
     * or for newer spells (only magery spells needs backwards compat)
     */
-	if (pCharSrc != nullptr && (IsSetMagicFlags(MAGICF_OSIFORMULAS) || spell >= SPELL_Animate_Dead_AOS))
+	if (pCharSrc != nullptr && (IsEraEnabled(RESDISPLAY_VERSION::RDS_T2A) || spell >= SPELL_Animate_Dead_AOS))
 	{
 		switch ( spell )
 		{
@@ -4099,7 +4102,7 @@ int64 CChar::GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharS
 			case SPELL_Strength:
 			case SPELL_Bless:
 			case SPELL_Curse:
-				iDuration = 1 + (((int64)pCharSrc->Skill_GetBase(SKILL_EVALINT) * 6) / 50);
+				iDuration = 1 + (((int64)pCharSrc->Skill_GetBase(SKILL_MAGERY) * 6) / 50);
 				break;
 
 			case SPELL_Protection:

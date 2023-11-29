@@ -154,7 +154,7 @@ enum MAGICFLAGS_TYPE
     MAGICF_SUMMONWALKCHECK      = 0x0000040,    // disallow summoning creatures to places they can't normally step
     MAGICF_NOFIELDSOVERWALLS    = 0x0000080,    // prevent fields from being formed over blocking objects.
     MAGICF_NOANIM               = 0x0000100,    // auto spellflag_no_anim on all spells
-    MAGICF_OSIFORMULAS          = 0x0000200,    // calculated damage and duration based on OSI formulas
+    MAGICF_UNUSED               = 0x0000200,    // Unused (maybe save for futures be)
     MAGICF_NOCASTFROZENHANDS    = 0x0000400,    // can't cast spells if got paralyzed holding something on hands
     MAGICF_POLYMORPHSTATS       = 0x0000800,    // Polymorph spells give out stats based on base chars (old behaviour backwards).
     MAGICF_OVERRIDEFIELDS       = 0x0001000,    // Prevent cast multiple field spells on the same tile, making the new field tile remove the previous field
@@ -1105,11 +1105,14 @@ typedef std::map<dword,dword> KRGumpsMap;
 } g_Cfg;
 
 
-
-#define IsSetEF(ef)				((g_Cfg._uiExperimentalFlags & ef) != 0)
-#define IsSetOF(of)				((g_Cfg._uiOptionFlags & of) != 0)
-#define IsSetCombatFlags(of)	((g_Cfg.m_iCombatFlags & of) != 0)
-#define IsSetMagicFlags(of)		((g_Cfg.m_iMagicFlags & of) != 0)
+#define IsAosFlagEnabled( value )	( g_Cfg.m_iFeatureAOS & (value) )
+#define IsSetEF(ef)				    ((g_Cfg._uiExperimentalFlags & ef) != 0)
+#define IsSetOF(of)				    ((g_Cfg._uiOptionFlags & of) != 0)
+#define IsRevealFlagEnabled(value)  ((g_Cfg.m_iRevealFlags & value) != 0)
+#define IsSetCombatFlags(of)	    ((g_Cfg.m_iCombatFlags & of) != 0)
+#define IsSetMagicFlags(of)		    ((g_Cfg.m_iMagicFlags & of) != 0)
+#define IsEraEnabled( value )	    ( g_Cfg._iEra >= (value) )
+#define IsEra( value )	            ( g_Cfg._iEra == (value) )
 
 
 #endif	// _INC_CSERVERCONFIG_H
