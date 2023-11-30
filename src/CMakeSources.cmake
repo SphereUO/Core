@@ -529,7 +529,6 @@ src/resources/SphereSvr.rc
 
 # Misc doc and *.ini files
 SET (docs_TEXT
-Changelog.txt
 src/sphere.ini
 src/sphereCrypt.ini
 )
