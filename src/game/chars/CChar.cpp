@@ -3872,6 +3872,8 @@ void CChar::r_Write( CScript & s )
 	s.WriteSection("WORLDCHAR %s", GetResourceName());
 	s.WriteKeyVal("CREATE", CWorldGameTime::GetCurrentTime().GetTimeDiff(_iTimeCreate) / MSECS_PER_TENTH );
 
+	CObjBase::r_Write(s);
+
 	if ( m_pPlayer )
 		m_pPlayer->r_WriteChar(this, s);
 	if ( m_pNPC )
