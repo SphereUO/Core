@@ -1407,6 +1407,15 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 	}
 
 	addObjMessage( pszTemp, pChar, wHue, TALKMODE_ITEM );
+
+	// check for bonded/tame status
+	if (pChar->m_pNPC)
+	{
+		if (pChar->m_pNPC->m_bonded)
+			addBarkLocalized(1049608, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, "");
+		else if (pChar->IsStatFlag(STATF_PET))
+			addBarkLocalized(502006, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, "");
+	}
 }
 
 void CClient::addPlayerStart( CChar * pChar )

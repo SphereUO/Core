@@ -919,7 +919,7 @@ void CChar::Use_EatQty( CItem * pFood, ushort uiQty )
 			const CClient* pClient = pOwner->GetClientActive();
 			if (pClient)
 			{
-				pClient->addBarkLocalized(1049666, nullptr); // Your pet has bonded with you!
+				pClient->addBarkLocalized(1049666, nullptr, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, "");
 			}
 		}
 	}	
