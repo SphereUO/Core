@@ -288,6 +288,7 @@ CChar::CChar( CREID_TYPE baseID ) :
     _iTimeNextRegen = _iTimeLastHitsUpdate + MSECS_PER_SEC;  // make it regen in one second from now, no need to instant regen.
     _iRegenTickCount = 0;
 	_iTimeLastCallGuards = 0;
+	_iTimeCombatLastHit = 0;
 
     m_zClimbHeight = 0;
 	m_fClimbUpdated = false;
@@ -3870,23 +3871,6 @@ void CChar::r_Write( CScript & s )
 
 	s.WriteSection("WORLDCHAR %s", GetResourceName());
 	s.WriteKeyVal("CREATE", CWorldGameTime::GetCurrentTime().GetTimeDiff(_iTimeCreate) / MSECS_PER_TENTH );
-
-    // Do not save TAG.LastHit (used by PreHit combat flag). It's based on the server uptime, so if this tag isn't zeroed,
-    //  after the server restart the char may not be able to attack until the server reaches the serv.time when the previous TAG.LastHit was set.
-	int64 iValLastHit = 0;
-	CVarDefContNum* pVarLastHit = m_TagDefs.GetKeyDefNum("LastHit");
-	if (pVarLastHit)
-	{
-		iValLastHit = pVarLastHit->GetValNum();
-		pVarLastHit->SetValNum(0);
-	}
-
-	CObjBase::r_Write(s);
-
-	if (iValLastHit != 0)
-	{
-		pVarLastHit->SetValNum(iValLastHit);
-	}
 
 	if ( m_pPlayer )
 		m_pPlayer->r_WriteChar(this, s);

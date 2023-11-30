@@ -1239,7 +1239,6 @@ void CChar::Fight_ClearAll()
 	m_atFight.m_iSwingAnimation = 0;
 	m_atFight.m_iSwingIgnoreLastHitTag = 0;
 
-	SetKeyStr("LastHit", "");
 	StatFlag_Clear(STATF_WAR);
 	UpdateModeFlag();
 }
@@ -1417,14 +1416,13 @@ void CChar::Fight_HitTry()
             Fight_SetDefaultSwingDelays();
             const int64 iTimeCur = CWorldGameTime::GetCurrentTime().GetTimeRaw() / MSECS_PER_TENTH;
             // Time required to perform the previous normal hit, without the InstaHit delay reduction.
-            const int64 iIH_LastHitTag_FullHit_Prev = GetKeyNum("LastHit");   // TAG.LastHit is in tenths of second
             // Time required to perform the shortened hit with InstaHit.
             const int64 iIH_LastHitTag_InstaHit = iTimeCur + m_atFight.m_iSwingAnimationDelay;   // it's the new m_iRecoilDelay (0) + the new m_iSwingAnimationDelay (COMBAT_MIN_SWING_ANIMATION_DELAY)
             iIH_LastHitTag_FullHit = iTimeCur + m_atFight.m_iRecoilDelay + m_atFight.m_iSwingAnimationDelay;
-            if (iIH_LastHitTag_InstaHit > iIH_LastHitTag_FullHit_Prev)
+            if (iIH_LastHitTag_InstaHit > _iTimeCombatLastHit)
             {
                 fIH_LastHitTag_Newer = true;
-                if (fIH_ShouldInstaHit && !iIH_LastHitTag_FullHit_Prev)
+                if (fIH_ShouldInstaHit && !_iTimeCombatLastHit)
                 {
                     // First hit with FirstHit_Instant -> no recoil, only the minimum swing animation delay
                     m_atFight.m_iSwingIgnoreLastHitTag = 1;
@@ -1450,7 +1448,7 @@ void CChar::Fight_HitTry()
             if (fIH_LastHitTag_Newer)
             {
                 // This protects against allowing shortened hits every time a char stops and starts attacking again, independently of this being the first, second, third or whatever hit.
-                SetKeyNum("LastHit", iIH_LastHitTag_FullHit);
+				_iTimeCombatLastHit = iIH_LastHitTag_FullHit;
             }
             if (!fIH_ShouldInstaHit)
             {
@@ -1716,7 +1714,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
     const WAR_SWING_TYPE iStageToSuspend = (IsSetCombatFlags(COMBAT_PREHIT) ? WAR_SWING_SWINGING : WAR_SWING_EQUIPPING);
     if ( IsSetCombatFlags(COMBAT_FIRSTHIT_INSTANT) && (!m_atFight.m_iSwingIgnoreLastHitTag) && (m_atFight.m_iWarSwingState == iStageToSuspend) )
     {
-        const int64 iTimeDiff = ((CWorldGameTime::GetCurrentTime().GetTimeRaw() / MSECS_PER_TENTH) - GetKeyNum("LastHit"));
+        const int64 iTimeDiff = ((CWorldGameTime::GetCurrentTime().GetTimeRaw() / MSECS_PER_TENTH) - _iTimeCombatLastHit);
         if (iTimeDiff < 0)
         {
             return iStageToSuspend;

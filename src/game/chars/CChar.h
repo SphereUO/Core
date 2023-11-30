@@ -178,8 +178,10 @@ public:
 	int64  _iTimeNextRegen;	    // When did i get my last regen tick ?
     ushort _iRegenTickCount;    // ticks until next regen.
 
-	int64 _iTimeLastHitsUpdate;
-	int64 _iTimeLastCallGuards;
+	int64 _iTimeLastHitsUpdate; // When did i send my last hits update packet ?
+	int64 _iTimeLastCallGuards; // When did i last call the guards for help ?
+
+	int64 _iTimeCombatLastHit; // When did i last hit ?
 
 	// Some character action in progress.
 	SKILL_TYPE	m_Act_SkillCurrent;	// Currently using a skill. Could be combat skill.
