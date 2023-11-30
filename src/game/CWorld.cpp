@@ -633,7 +633,6 @@ CWorld::CWorld() :
 	_Ticker(&_GameClock)
 {
 	_iTimeLastWorldSave = 0;
-	m_ticksWithoutMySQL = 0;
 	m_iSaveCountID = 0;
 	_iSaveStage = 0;
 	_iSaveTimer = 0;

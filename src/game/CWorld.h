@@ -146,8 +146,7 @@ private:
 	int64	_iTimeLastWorldSave;		// when to auto do the worldsave ?
 	int64	_iTimeLastDeadRespawn;		// when to res dead NPC's ?
 	int64	_iTimeLastCallUserFunc;		// when to call next user func
-	ullong	m_ticksWithoutMySQL;		// MySQL should be running constantly if MySQLTicks is true, keep here record of how much ticks since Sphere is not connected.
-
+	
 	int		_iSaveStage;	// Current stage of the background save.
 	llong	_iSaveTimer;	// Time it takes to save
 

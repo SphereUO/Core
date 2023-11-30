@@ -8,6 +8,7 @@
 #include "../items/CItemVendable.h"
 #include "../triggers.h"
 #include "../CServer.h"
+#include "../CWorldGameTime.h"
 #include "../CWorldMap.h"
 #include "CChar.h"
 #include "CCharNPC.h"
@@ -2304,6 +2305,10 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
     pChar->Stat_SetVal(STAT_FOOD, 50);	// this is good for something.
     pChar->m_Act_UID = GetUID();
     pChar->Skill_Start(NPCACT_FOLLOW_TARG);
+
+	// set the new bonded time for the pet
+	if (pChar->m_pNPC)
+		pChar->m_pNPC->_bondedTime = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
     if (fTamedPrev)
         return -SKTRIG_QTY;	// no credit for this.

@@ -47,7 +47,6 @@ CServerConfig::CServerConfig()
 
 	m_iDebugFlags			= 0;	//DEBUGF_NPC_EMOTE
 	m_fSecure				= true;
-	m_iFreezeRestartTime	= 60;
 	m_bAgree				= false;
 	m_fMd5Passwords			= false;
 
@@ -248,7 +247,6 @@ CServerConfig::CServerConfig()
 
 	//	MySQL support
 	m_bMySql				= false;
-	m_bMySqlTicks			= false;
 
     m_bAutoResDisp          = true;
 	m_iAutoPrivFlags = 0;
@@ -540,7 +538,6 @@ enum RC_TYPE
 	RC_FEATURESTOL,
 	RC_FLIPDROPPEDITEMS,		// m_fFlipDroppedItems
 	RC_FORCEGARBAGECOLLECT,		// m_fSaveGarbageCollect
-	RC_FREEZERESTARTTIME,		// m_iFreezeRestartTime
 	RC_GAMEMINUTELENGTH,		// m_iGameMinuteLength
 	RC_GENERICSOUNDS,			// m_fGenericSounds
 	RC_GUARDLINGER,				// m_iGuardLingerTime
@@ -609,7 +606,6 @@ enum RC_TYPE
 	RC_MYSQLDB,					// m_sMySqlDatabase
 	RC_MYSQLHOST,				// m_sMySqlHost
 	RC_MYSQLPASS,				// m_sMySqlPassword
-	RC_MYSQLTICKS,				// m_bMySqlTicks
 	RC_MYSQLUSER,				// m_sMySqlUser
 	RC_NETTTL,					// m_iNetHistoryTTL
 	RC_NETWORKTHREADPRIORITY,	// _uiNetworkThreadPriority
@@ -812,7 +808,6 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "FEATURETOL",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iFeatureTOL)			}},
 	{ "FLIPDROPPEDITEMS",		{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fFlipDroppedItems)		}},
 	{ "FORCEGARBAGECOLLECT",	{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fSaveGarbageCollect)	}},
-	{ "FREEZERESTARTTIME",		{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iFreezeRestartTime)	}},
 	{ "GAMEMINUTELENGTH",		{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iGameMinuteLength)		}},
 	{ "GENERICSOUNDS",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fGenericSounds)		}},
 	{ "GUARDLINGER",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iGuardLingerTime)		}},
@@ -881,7 +876,6 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "MYSQLDATABASE",			{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlDB)				}},
 	{ "MYSQLHOST",				{ ELEM_CSTRING, static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlHost)			}},
 	{ "MYSQLPASSWORD",			{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlPass)			}},
-	{ "MYSQLTICKS",				{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_bMySqlTicks)			}},
 	{ "MYSQLUSER",				{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlUser)			}},
 	{ "NETTTL",					{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iNetHistoryTTL)		}},
 	{ "NETWORKTHREADPRIORITY",	{ ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,_uiNetworkThreadPriority)}},
@@ -1201,9 +1195,6 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			break;
 		case RC_DECAYTIMER:
 			m_iDecay_Item = s.GetArgLLVal() * 60 * MSECS_PER_SEC;
-			break;
-		case RC_FREEZERESTARTTIME:
-			m_iFreezeRestartTime = s.GetArgLLVal() * MSECS_PER_SEC;
 			break;
 		case RC_GAMEMINUTELENGTH:
 			m_iGameMinuteLength = s.GetArgLLVal() * MSECS_PER_SEC;
@@ -2015,9 +2006,6 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			break;
 		case RC_DECAYTIMER:
 			sVal.FormatLLVal( m_iDecay_Item / (60*MSECS_PER_SEC));
-			break;
-		case RC_FREEZERESTARTTIME:
-			sVal.FormatLLVal(m_iFreezeRestartTime / MSECS_PER_SEC);
 			break;
 		case RC_GAMEMINUTELENGTH:
 			sVal.FormatLLVal(m_iGameMinuteLength / MSECS_PER_SEC);
