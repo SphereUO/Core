@@ -2280,7 +2280,7 @@ nowinsock:		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Winsock 1.1 not found!\n");
 		g_Log.Event(LOGM_INIT, wSockInfo);
 #endif
 
-	if (g_Cfg.m_bMySql && g_Cfg.m_bMySqlTicks)
+	if (g_Cfg.m_bMySql)
 	{
 		EXC_SET_BLOCK( "Connecting to MySQL server" );
 		if (_hDb.Connect())

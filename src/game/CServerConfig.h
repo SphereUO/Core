@@ -544,7 +544,6 @@ public:
 
 	//	MySQL features
 	bool    m_bMySql;       // Enables MySQL.
-	bool    m_bMySqlTicks;  // Enables ticks from MySQL.
 	CSString m_sMySqlHost;  // MySQL Host.
 	CSString m_sMySqlUser;  // MySQL User.
 	CSString m_sMySqlPass;  // MySQL Password.

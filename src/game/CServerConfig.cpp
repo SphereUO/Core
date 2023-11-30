@@ -247,7 +247,6 @@ CServerConfig::CServerConfig()
 
 	//	MySQL support
 	m_bMySql				= false;
-	m_bMySqlTicks			= false;
 
     m_bAutoResDisp          = true;
 	m_iAutoPrivFlags = 0;
@@ -607,7 +606,6 @@ enum RC_TYPE
 	RC_MYSQLDB,					// m_sMySqlDatabase
 	RC_MYSQLHOST,				// m_sMySqlHost
 	RC_MYSQLPASS,				// m_sMySqlPassword
-	RC_MYSQLTICKS,				// m_bMySqlTicks
 	RC_MYSQLUSER,				// m_sMySqlUser
 	RC_NETTTL,					// m_iNetHistoryTTL
 	RC_NETWORKTHREADPRIORITY,	// _uiNetworkThreadPriority
@@ -878,7 +876,6 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "MYSQLDATABASE",			{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlDB)				}},
 	{ "MYSQLHOST",				{ ELEM_CSTRING, static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlHost)			}},
 	{ "MYSQLPASSWORD",			{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlPass)			}},
-	{ "MYSQLTICKS",				{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_bMySqlTicks)			}},
 	{ "MYSQLUSER",				{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sMySqlUser)			}},
 	{ "NETTTL",					{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iNetHistoryTTL)		}},
 	{ "NETWORKTHREADPRIORITY",	{ ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,_uiNetworkThreadPriority)}},
