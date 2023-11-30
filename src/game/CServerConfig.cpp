@@ -47,7 +47,6 @@ CServerConfig::CServerConfig()
 
 	m_iDebugFlags			= 0;	//DEBUGF_NPC_EMOTE
 	m_fSecure				= true;
-	m_iFreezeRestartTime	= 60;
 	m_bAgree				= false;
 	m_fMd5Passwords			= false;
 
@@ -540,7 +539,6 @@ enum RC_TYPE
 	RC_FEATURESTOL,
 	RC_FLIPDROPPEDITEMS,		// m_fFlipDroppedItems
 	RC_FORCEGARBAGECOLLECT,		// m_fSaveGarbageCollect
-	RC_FREEZERESTARTTIME,		// m_iFreezeRestartTime
 	RC_GAMEMINUTELENGTH,		// m_iGameMinuteLength
 	RC_GENERICSOUNDS,			// m_fGenericSounds
 	RC_GUARDLINGER,				// m_iGuardLingerTime
@@ -812,7 +810,6 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY+1]
 	{ "FEATURETOL",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iFeatureTOL)			}},
 	{ "FLIPDROPPEDITEMS",		{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fFlipDroppedItems)		}},
 	{ "FORCEGARBAGECOLLECT",	{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fSaveGarbageCollect)	}},
-	{ "FREEZERESTARTTIME",		{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iFreezeRestartTime)	}},
 	{ "GAMEMINUTELENGTH",		{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iGameMinuteLength)		}},
 	{ "GENERICSOUNDS",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fGenericSounds)		}},
 	{ "GUARDLINGER",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iGuardLingerTime)		}},
@@ -1201,9 +1198,6 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			break;
 		case RC_DECAYTIMER:
 			m_iDecay_Item = s.GetArgLLVal() * 60 * MSECS_PER_SEC;
-			break;
-		case RC_FREEZERESTARTTIME:
-			m_iFreezeRestartTime = s.GetArgLLVal() * MSECS_PER_SEC;
 			break;
 		case RC_GAMEMINUTELENGTH:
 			m_iGameMinuteLength = s.GetArgLLVal() * MSECS_PER_SEC;
@@ -2015,9 +2009,6 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			break;
 		case RC_DECAYTIMER:
 			sVal.FormatLLVal( m_iDecay_Item / (60*MSECS_PER_SEC));
-			break;
-		case RC_FREEZERESTARTTIME:
-			sVal.FormatLLVal(m_iFreezeRestartTime / MSECS_PER_SEC);
 			break;
 		case RC_GAMEMINUTELENGTH:
 			sVal.FormatLLVal(m_iGameMinuteLength / MSECS_PER_SEC);

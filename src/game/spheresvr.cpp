@@ -416,6 +416,8 @@ int Sphere_OnTick()
 
 static void Sphere_MainMonitorLoop()
 {
+	const static byte iFreezeRestartTime = 60;	// How often to check for freeze ups. (seconds)
+
 	constexpr const char *m_sClassName = "SphereMonitor";
 	// Just make sure the main loop is alive every so often.
 	// This should be the parent thread. try to restart it if it is not.
@@ -423,16 +425,9 @@ static void Sphere_MainMonitorLoop()
 	{
 		EXC_TRY("MainMonitorLoop");
 
-		if ( g_Cfg.m_iFreezeRestartTime <= 0 )
-		{
-			DEBUG_ERR(("Freeze Restart Time cannot be cleared at run time\n"));
-			g_Cfg.m_iFreezeRestartTime = 10;
-		}
-
 		EXC_SET_BLOCK("Sleep");
 		// only sleep 1 second at a time, to avoid getting stuck here when closing
-		// down with large m_iFreezeRestartTime values set
-		for (int i = 0; i < g_Cfg.m_iFreezeRestartTime; ++i)
+		for (int i = 0; i < iFreezeRestartTime; ++i)
 		{
 			if ( g_Serv.GetExitFlag() )
 				break;
@@ -452,7 +447,6 @@ static void Sphere_MainMonitorLoop()
 #endif
 		EXC_CATCH;
 	}
-
 }
 
 
@@ -801,20 +795,10 @@ int _cdecl main( int argc, char * argv[] )
         //  an instance of CNetworkInput nad CNetworkOutput, which support working in a multi threaded way (declarations and definitions in network_multithreaded.h/.cpp)
 		g_NetworkManager.start();
 
-		const bool shouldRunInThread = ( g_Cfg.m_iFreezeRestartTime > 0 );
-		if (shouldRunInThread)
-		{
-			g_Main.start();				// Starts another thread to do all the work (it does Sphere_OnTick())
-			IThread::setThreadName("SphereUO");
-			Sphere_MainMonitorLoop();	// Use this thread to monitor if the others are stuck
-		}
-		else
-		{
-			while ( !g_Serv.GetExitFlag() )
-			{
-				g_Main.tick();			// Use this thread to do all the work, without monitoring the other threads state
-			}
-		}
+		// Starts another thread to do all the work (it does Sphere_OnTick())
+		g_Main.start();				
+		IThread::setThreadName("SphereUO");
+		Sphere_MainMonitorLoop();	// Use this thread to monitor if the others are stuck
 	}
 
 exit_server:

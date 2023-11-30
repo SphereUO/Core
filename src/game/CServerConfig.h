@@ -243,7 +243,6 @@ public:
 	CSString m_sAcctBaseDir;    // Where do the account files go/come from ?
 
 	bool m_fSecure;             // Secure mode. (will trap exceptions)
-	int64  m_iFreezeRestartTime;  // # seconds before restarting.
 #define DEBUGF_NPC_EMOTE		0x0001  // NPCs emote their actions.
 #define DEBUGF_ADVANCE_STATS	0x0002  // prints stat % skill changes (only for _DEBUG builds).
 #define DEBUGF_EXP				0x0200  // experience gain/loss.
