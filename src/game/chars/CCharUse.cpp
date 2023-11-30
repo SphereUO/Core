@@ -905,6 +905,24 @@ void CChar::Use_EatQty( CItem * pFood, ushort uiQty )
 	UpdateDir(pFood);
 	EatAnim(pFood->GetName(), uiRestore * uiQty);
 	pFood->ConsumeAmount(uiQty);
+
+	//check bondet time to bond
+	if (m_pNPC && m_pNPC->_bondedTime && m_pNPC->_bondedTime < CWorldGameTime::GetCurrentTime().GetTimeRaw())
+	{
+		//only if have owner
+		const CChar * pOwner = NPC_PetGetOwner();
+		if (pOwner)
+		{
+			m_pNPC->_bondedTime = 0;
+			m_pNPC->m_bonded = true;
+			UpdatePropertyFlag();
+			const CClient* pClient = pOwner->GetClientActive();
+			if (pClient)
+			{
+				pClient->addBarkLocalized(1049666, nullptr); // Your pet has bonded with you!
+			}
+		}
+	}	
 }
 
 bool CChar::Use_Eat( CItem * pItemFood, ushort uiQty )

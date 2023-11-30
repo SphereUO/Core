@@ -31,6 +31,7 @@ public:
 	word m_Home_Dist_Wander;	// Distance to allow to "wander".
 	byte m_Act_Motivation;		// 0-100 (100=very greatly) how bad do i want to do the current action.
 	bool m_bonded;				// Bonded pet
+	int64 _bondedTime;			// Time when bonded
 
 	CResourceRefArray m_Speech;	// Speech fragment list (other stuff we know): We respond to what we hear with this.
 

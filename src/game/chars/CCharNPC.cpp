@@ -45,6 +45,7 @@ CCharNPC::CCharNPC( CChar * pChar, NPCBRAIN_TYPE NPCBrain )
 	m_Home_Dist_Wander = INT16_MAX;	// as far as i want.
 	m_Act_Motivation = 0;
 	m_bonded = 0;
+	_bondedTime = 0;
 #ifndef _WIN32
 	for (int i_tmpN=0;i_tmpN < MAX_NPC_PATH_STORAGE_SIZE;i_tmpN++)
 	{
@@ -82,6 +83,9 @@ bool CCharNPC::r_LoadVal( CChar * pChar, CScript &s )
 			m_bonded = (s.GetArgVal() > 0);
 			if ( !g_Serv.IsLoading() )
 				pChar->UpdatePropertyFlag();
+			break;
+		case CNC_BONDEDTIME:
+			_bondedTime = s.GetArg64Val();
 			break;
 		case CNC_FOLLOWERSLOTS:
 			pChar->SetDefNum(s.GetKey(), s.GetArgVal(), false );
@@ -167,6 +171,9 @@ bool CCharNPC::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		case CNC_BONDED:
 			sVal.FormatVal( m_bonded );
 			break;
+		case CNC_BONDEDTIME:
+			sVal.Format64Val( _bondedTime );
+			break;
 		case CNC_FOLLOWERSLOTS:
 			sVal.FormatLLVal(pChar->GetDefNum(ptcKey, true));
 			break;
@@ -247,6 +254,9 @@ void CCharNPC::r_WriteChar( CChar * pChar, CScript & s )
 	m_Speech.r_Write( s, "SPEECH" );
 	if (m_bonded)
 		s.WriteKeyVal("BONDED", m_bonded);
+
+	if (_bondedTime)
+		s.WriteKeyVal("BONDEDTIME", _bondedTime);
 
 	if ( m_Need.GetResourceID().IsValidUID())
 	{
