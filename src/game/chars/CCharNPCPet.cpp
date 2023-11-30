@@ -4,9 +4,12 @@
 #include "../components/CCSpawn.h"
 #include "../items/CItemVendable.h"
 #include "../CServerTime.h"
+#include "../CWorldGameTime.h"
 #include "../triggers.h"
 #include "CChar.h"
 #include "CCharNPC.h"
+
+static int32 const BondedTime = 7 * 24 * 60 * 60 * MSECS_PER_SEC;	// 7 days
 
 void CChar::NPC_OnPetCommand( bool fSuccess, CChar * pMaster )
 {
@@ -548,6 +551,7 @@ void CChar::NPC_PetClearOwners()
 	CChar * pOwner = NPC_PetGetOwner();
 	Memory_ClearTypes(MEMORY_IPET|MEMORY_FRIEND);
 	m_pNPC->m_bonded = 0;	// pets without owner cannot be bonded
+	m_pNPC->_bondedTime = 0;	// reset bonded time
 
 	if ( NPC_IsVendor() )
 	{
@@ -613,6 +617,12 @@ bool CChar::NPC_PetSetOwner( CChar * pChar )
 		CItemContainer * pBank = GetBank();
 		pBank->m_itEqBankBox.m_Check_Amount = 0;
 		StatFlag_Set(STATF_INVUL);
+	}
+	else
+	{
+		// if is a pet, set the bonded time to new owner
+		if (m_pNPC)
+			m_pNPC->_bondedTime = CWorldGameTime::GetCurrentTime().GetTimeRaw() + BondedTime;
 	}
 
 	if ( IsSetOF(OF_PetSlots) )
