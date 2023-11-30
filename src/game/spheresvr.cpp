@@ -159,7 +159,7 @@ extern CDataBaseAsyncHelper g_asyncHdb;
 //	Main server loop
 
 MainThread::MainThread()
-	: AbstractSphereThread("T_Main", IThread::RealTime)
+	: AbstractSphereThread("T_Main", IThread::Highest)
 {
     m_profile.EnableProfile(PROFILE_NETWORK_RX);
     m_profile.EnableProfile(PROFILE_CLIENTS);
@@ -805,7 +805,7 @@ int _cdecl main( int argc, char * argv[] )
 		if (shouldRunInThread)
 		{
 			g_Main.start();				// Starts another thread to do all the work (it does Sphere_OnTick())
-			IThread::setThreadName("T_Monitor");
+			IThread::setThreadName("SphereUO");
 			Sphere_MainMonitorLoop();	// Use this thread to monitor if the others are stuck
 		}
 		else
