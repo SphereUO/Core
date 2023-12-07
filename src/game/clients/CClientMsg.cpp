@@ -1411,10 +1411,15 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 	// check for bonded/tame status
 	if (pChar->m_pNPC)
 	{
-		if (pChar->m_pNPC->m_bonded)
-			addBarkLocalized(1049608, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, "");
+		if (pChar->IsStatFlag(STATF_CONJURED))
+			addBarkLocalized(1049646, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, ""); // (summoned)
 		else if (pChar->IsStatFlag(STATF_PET))
-			addBarkLocalized(502006, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, "");
+		{
+			if (pChar->m_pNPC->m_bonded)
+				addBarkLocalized(1049608, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, ""); // (bonded)
+			else
+				addBarkLocalized(502006, pChar, HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL, ""); // (tame)
+		}
 	}
 }
 
