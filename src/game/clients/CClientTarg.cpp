@@ -1995,12 +1995,13 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, ITEMID_TYPE 
 		{
 			switch (pCharTarg->GetNPCBrain())
 			{
-			case NPCBRAIN_ANIMAL:
-			case NPCBRAIN_DRAGON:
-			case NPCBRAIN_MONSTER:
-				return m_pChar->Skill_Start(SKILL_VETERINARY);
-			default:
-				return m_pChar->Skill_Start(SKILL_HEALING);
+				case NPCBRAIN_ANIMAL:
+				case NPCBRAIN_DRAGON:
+				case NPCBRAIN_BERSERK:
+				case NPCBRAIN_MONSTER:
+					return m_pChar->Skill_Start(SKILL_VETERINARY);
+				default:
+					return m_pChar->Skill_Start(SKILL_HEALING);
 			}
 		}
 		return m_pChar->Skill_Start(SKILL_HEALING);
