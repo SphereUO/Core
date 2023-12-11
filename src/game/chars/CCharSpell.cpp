@@ -2097,24 +2097,18 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 		CChar * pChar = AreaChar.GetChar();
 		if ( pChar == nullptr )
 			break;
+
 		if ( pChar == this )
 		{
 			if ( pSpellDef->IsSpellType(SPELLFLAG_HARM) && !IsSetMagicFlags(MAGICF_CANHARMSELF) )
 				continue;
 		}
-		pChar->OnSpellEffect( spelltype, this, iSkillLevel, nullptr, iDuration);
-	}
 
-	if ( !pSpellDef->IsSpellType( SPELLFLAG_DAMAGE ))	// prevent damage nearby items on ground
-	{
-		CWorldSearch AreaItem( pntTarg, iDist );
-		for (;;)
-		{
-			CItem * pItem = AreaItem.GetItem();
-			if ( pItem == nullptr )
-				break;
-			pItem->OnSpellEffect( spelltype, this, iSkillLevel, nullptr );
-		}
+		// check if is line of sight
+		if ( !CanSeeLOS(pChar) )
+			continue;
+
+		pChar->OnSpellEffect( spelltype, this, iSkillLevel, nullptr, iDuration);
 	}
 }
 
