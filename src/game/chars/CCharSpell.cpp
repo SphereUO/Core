@@ -2862,10 +2862,12 @@ bool CChar::Spell_CastDone()
 		CItem * pItem = dynamic_cast <CItem*>(pObjSrc);
 		if (pItem == nullptr)
 			return false;
-		if (!pItem->m_itWeapon.m_spelllevel)
-			iSkillLevel = Calc_GetRandVal(500);
-		else
+
+		// if have IT_SCROLL or IT_WAND have m_spelllevel, use it for SkillLevel
+		if (pItem->m_itWeapon.m_spelllevel)
 			iSkillLevel = pItem->m_itWeapon.m_spelllevel;
+		else
+			iSkillLevel = Calc_GetRandVal(1000); // random 0-1000 value from the item without spell level
 	}
 	else
 	{
