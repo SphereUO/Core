@@ -2104,6 +2104,13 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 				continue;
 		}
 
+		// harm of damage spells check
+		if (pSpellDef->IsSpellType(SPELLFLAG_HARM) || pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) )
+		{
+			if (pChar->NPC_IsOwnedBy(this, false))	// dont hurt my pet
+				continue;
+		}
+
 		// check if is line of sight
 		if ( !CanSeeLOS(pChar, 0, true) )
 			continue;
