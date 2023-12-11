@@ -2091,10 +2091,13 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 	if ( pSpellDef == nullptr )
 		return;
 
+	// get my noto
+	NOTO_TYPE my_noto = Noto_GetFlag(this);
+
 	CWorldSearch AreaChar( pntTarg, iDist );
 	for (;;)
 	{
-		CChar * pChar = AreaChar.GetChar();
+		CChar* pChar = AreaChar.GetChar();
 		if ( pChar == nullptr )
 			break;
 
@@ -2104,10 +2107,24 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 				continue;
 		}
 
+		NOTO_TYPE noto = pChar->Noto_GetFlag(this);
 		// harm of damage spells check
 		if (pSpellDef->IsSpellType(SPELLFLAG_HARM) || pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) )
 		{
 			if (pChar->NPC_IsOwnedBy(this, false))	// dont hurt my pet
+				continue;
+
+			// dont hurt the same guild
+			if (noto == NOTO_GUILD_SAME)     
+				continue;
+
+			// if we are good, dont hurt good people
+			if (my_noto == NOTO_GOOD && noto == NOTO_GOOD)
+				continue;
+		}
+		else if (pSpellDef->IsSpellType(SPELLFLAG_GOOD))
+		{
+			if (noto > NOTO_GUILD_SAME)	// dont use good spells on criminal/murders/enemies
 				continue;
 		}
 
