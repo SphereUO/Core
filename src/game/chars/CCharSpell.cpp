@@ -2105,7 +2105,7 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 		}
 
 		// check if is line of sight
-		if ( !CanSeeLOS(pChar) )
+		if ( !CanSeeLOS(pChar, 0, true) )
 			continue;
 
 		pChar->OnSpellEffect( spelltype, this, iSkillLevel, nullptr, iDuration);
