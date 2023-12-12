@@ -1270,7 +1270,6 @@ void CClient::addItemName( CItem * pItem )
 		Args.m_VarsLocal.SetNumNew("ClickMsgHue", (int64)(wHue));
 
 		TRIGRET_TYPE ret = pItem->OnTrigger( "@AfterClick", m_pChar, &Args );	// CTRIG_AfterClick, ITRIG_AfterClick
-
 		if ( ret == TRIGRET_RET_TRUE )
 			return;
 
