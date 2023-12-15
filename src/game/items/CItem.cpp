@@ -645,9 +645,18 @@ CItem * CItem::ReadTemplate( CResourceLock & s, CObjBase * pCont ) // static
 						pScriptArgs = std::make_unique<CScriptTriggerArgs>(ptcArgs);
 					}
 
-					CObjBaseTemplate* pContObjBaseT = pCont->GetTopLevelObj();
-					ASSERT(pContObjBaseT);
-					pItem->r_Call(ptcFunctionName, dynamic_cast<CTextConsole*>(pContObjBaseT), pScriptArgs.get());
+					// use pCont is exist, if not use g_Serv
+					if (pCont)
+					{
+						CObjBaseTemplate* pContObjBaseT = pCont->GetTopLevelObj();
+						ASSERT(pContObjBaseT);
+						pItem->r_Call(ptcFunctionName, dynamic_cast<CTextConsole*>(pContObjBaseT), pScriptArgs.get());
+					}
+					else
+					{
+						pItem->r_Call(ptcFunctionName, &g_Serv, pScriptArgs.get());
+					}
+
 					if (pItem->IsDeleted())
 					{
 						pItem = nullptr;
@@ -1747,56 +1756,6 @@ lpctstr CItem::GetNameFull( bool fIdentified ) const
 		len += snprintf(pTemp + len, Str_TempLength() - len, pszTitle, GetAmount());
 	}
 
-	if ( fIdentified && IsAttr(ATTR_CURSED|ATTR_CURSED2|ATTR_BLESSED|ATTR_BLESSED2|ATTR_MAGIC))
-	{
-		bool fTitleSet = false;
-		switch ( m_Attr & ( ATTR_CURSED|ATTR_CURSED2|ATTR_BLESSED|ATTR_BLESSED2))
-		{
-			case (ATTR_CURSED|ATTR_CURSED2):
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_UNHOLY );
-				fTitleSet = true;
-				break;
-			case ATTR_CURSED2:
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_DAMNED );
-				fTitleSet = true;
-				break;
-			case ATTR_CURSED:
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_CURSED );
-				fTitleSet = true;
-				break;
-			case (ATTR_BLESSED|ATTR_BLESSED2):
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_HOLY );
-				fTitleSet = true;
-				break;
-			case ATTR_BLESSED2:
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_SACRED );
-				fTitleSet = true;
-				break;
-			case ATTR_BLESSED:
-				pszTitle = g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_BLESSED );
-				fTitleSet = true;
-				break;
-		}
-		if ( fTitleSet )
-		{
-			if ( fSingular && !IsSetOF(OF_NoPrefix) )
-				len = Str_CopyLimitNull( pTemp, Str_GetArticleAndSpace(pszTitle), Str_TempLength());
-			len += Str_CopyLimitNull( pTemp+len, pszTitle, Str_TempLength() - len);
-		}
-
-		if ( IsAttr(ATTR_MAGIC))
-		{
-			if ( !pszTitle )
-			{
-				pszTitle = IsSetOF(OF_NoPrefix) ? "" : "a ";
-				len = Str_CopyLimitNull( pTemp, pszTitle, Str_TempLength());
-			}
-
-			if ( !IsTypeArmorWeapon() && (strnicmp( pszName, "MAGIC", 5 ) != 0))		// don't put "magic" prefix on armor/weapons and names already starting with "magic"
-				len += Str_CopyLimitNull( pTemp+len, g_Cfg.GetDefaultMsg( DEFMSG_ITEMTITLE_MAGIC ), Str_TempLength() - len);
-		}
-	}
-
 	// Prefix the name
 	switch ( m_type )
 	{
@@ -2364,6 +2323,8 @@ void CItem::r_Write( CScript & s )
 		s.WriteKeyFormat("DAM", "%hu,%hu", m_attackBase, m_attackBase + m_attackRange);
 	if ( m_defenseBase )
 		s.WriteKeyFormat("ARMOR", "%hu,%hu", m_defenseBase, m_defenseBase + m_defenseRange);
+	if (m_CanMask)
+        s.WriteKeyVal("CANMASK", m_CanMask);
     if (!GetSpawn())
     {
         if ( m_itNormal.m_more1 )

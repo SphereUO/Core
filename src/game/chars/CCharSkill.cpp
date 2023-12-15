@@ -2472,14 +2472,14 @@ int CChar::Skill_Herding( SKTRIG_TYPE stage )
 			// tamed pets cannot be herded
 			if ( !pChar->IsStatFlag(STATF_PET) )
 			{
-				SysMessage("That animal looks tame already.");
+				SysMessagef(g_Cfg.GetDefaultMsg( DEFMSG_TAMING_TAME ), pChar->GetName());
 				return -SKTRIG_ABORT;
 			}
 
 			// is a valid point?
 			if ( !m_Act_p.IsValidPoint())
 			{
-				SysMessage("That location is not valid.");
+				SysMessageDefault(DEFMSG_LOCATION_INVALID);
 				return -SKTRIG_ABORT;
 			}
 

@@ -2091,30 +2091,48 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 	if ( pSpellDef == nullptr )
 		return;
 
+	// get my noto
+	NOTO_TYPE my_noto = Noto_GetFlag(this);
+
 	CWorldSearch AreaChar( pntTarg, iDist );
 	for (;;)
 	{
-		CChar * pChar = AreaChar.GetChar();
+		CChar* pChar = AreaChar.GetChar();
 		if ( pChar == nullptr )
 			break;
+
 		if ( pChar == this )
 		{
 			if ( pSpellDef->IsSpellType(SPELLFLAG_HARM) && !IsSetMagicFlags(MAGICF_CANHARMSELF) )
 				continue;
 		}
-		pChar->OnSpellEffect( spelltype, this, iSkillLevel, nullptr, iDuration);
-	}
 
-	if ( !pSpellDef->IsSpellType( SPELLFLAG_DAMAGE ))	// prevent damage nearby items on ground
-	{
-		CWorldSearch AreaItem( pntTarg, iDist );
-		for (;;)
+		NOTO_TYPE noto = pChar->Noto_GetFlag(this);
+		// harm of damage spells check
+		if (pSpellDef->IsSpellType(SPELLFLAG_HARM) || pSpellDef->IsSpellType(SPELLFLAG_DAMAGE) )
 		{
-			CItem * pItem = AreaItem.GetItem();
-			if ( pItem == nullptr )
-				break;
-			pItem->OnSpellEffect( spelltype, this, iSkillLevel, nullptr );
+			if (pChar->NPC_IsOwnedBy(this, false))	// dont hurt my pet
+				continue;
+
+			// dont hurt the same guild
+			if (noto == NOTO_GUILD_SAME)     
+				continue;
+
+			// if we are good, dont hurt good people
+			if (my_noto == NOTO_GOOD && noto == NOTO_GOOD)
+				continue;
 		}
+		else if (pSpellDef->IsSpellType(SPELLFLAG_GOOD))
+		{
+			if (noto > NOTO_GUILD_SAME)	// dont use good spells on criminal/murders/enemies
+				continue;
+		}
+
+		// check if is line of sight
+		if ( !CanSeeLOS(pChar, 0, true) )
+			continue;
+
+		pChar->OnSpellEffect( spelltype, this, iSkillLevel, nullptr, iDuration);
 	}
 }
 
@@ -2862,10 +2880,12 @@ bool CChar::Spell_CastDone()
 		CItem * pItem = dynamic_cast <CItem*>(pObjSrc);
 		if (pItem == nullptr)
 			return false;
-		if (!pItem->m_itWeapon.m_spelllevel)
-			iSkillLevel = Calc_GetRandVal(500);
-		else
+
+		// if have IT_SCROLL or IT_WAND have m_spelllevel, use it for SkillLevel
+		if (pItem->m_itWeapon.m_spelllevel)
 			iSkillLevel = pItem->m_itWeapon.m_spelllevel;
+		else
+			iSkillLevel = Calc_GetRandVal(1000); // random 0-1000 value from the item without spell level
 	}
 	else
 	{

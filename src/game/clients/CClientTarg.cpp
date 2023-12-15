@@ -1604,11 +1604,11 @@ bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
 
 	if ( IsSetOF(OF_PetSlots) )
 	{
-		short iFollowerSlots =  (short)pCharPet->GetDefNum("FOLLOWERSLOTS", true);
+		short iFollowerSlots =  (short)pCharPet->GetDefNum("FOLLOWERSLOTS", true, 1);
 		m_pChar->FollowersUpdate(pCharPet,(-maximum(0, iFollowerSlots)));
 	}
 
-	pCharMaster->GetBank()->ContentAdd( pPetItem );
+	m_pChar->GetBank(LAYER_STABLE)->ContentAdd( pPetItem );
 	pCharMaster->Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_STABLEMASTER_CLAIM ) );
 	return true;
 }
@@ -1995,12 +1995,13 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, ITEMID_TYPE 
 		{
 			switch (pCharTarg->GetNPCBrain())
 			{
-			case NPCBRAIN_ANIMAL:
-			case NPCBRAIN_DRAGON:
-			case NPCBRAIN_MONSTER:
-				return m_pChar->Skill_Start(SKILL_VETERINARY);
-			default:
-				return m_pChar->Skill_Start(SKILL_HEALING);
+				case NPCBRAIN_ANIMAL:
+				case NPCBRAIN_DRAGON:
+				case NPCBRAIN_BERSERK:
+				case NPCBRAIN_MONSTER:
+					return m_pChar->Skill_Start(SKILL_VETERINARY);
+				default:
+					return m_pChar->Skill_Start(SKILL_HEALING);
 			}
 		}
 		return m_pChar->Skill_Start(SKILL_HEALING);
