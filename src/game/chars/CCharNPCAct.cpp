@@ -149,7 +149,7 @@ bool CChar::NPC_OnVerb( CScript &s, CTextConsole * pSrc ) // Execute command fro
 	case NV_HIRE:
 		return NPC_OnHireHear( pCharSrc);
 	case NV_PETRETRIEVE:
-		return( NPC_StablePetRetrieve( pCharSrc ));
+		return( NPC_StablePetRetrieve( pCharSrc, s.GetArgStr() ));
 	case NV_PETSTABLE:
 		return( NPC_StablePetSelect( pCharSrc ));
 	case NV_RELEASE:

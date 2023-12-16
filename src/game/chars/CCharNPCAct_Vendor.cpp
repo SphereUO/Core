@@ -174,7 +174,7 @@ bool CChar::NPC_StablePetSelect( CChar * pCharPlayer )
 	return true;
 }
 
-bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
+bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer, lpctstr pszPetName )
 {
 	ADDTOCALLSTACK("CChar::NPC_StablePetRetrieve");
 	ASSERT(m_pNPC);
@@ -193,32 +193,36 @@ bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
 		CItem* pItem = static_cast<CItem*>(pObjRec);
 		if ( pItem->IsType(IT_FIGURINE) && (pItem->m_uidLink == pCharPlayer->GetUID()) )
 		{
-			CChar* pPet = pCharPlayer->Use_Figurine(pItem);
-			if ( !pPet )
+			//if name is empty or is the same as the pet name, retrieve it
+			if ( strlen(pszPetName) == 0 || FindStrWord(pszPetName, pItem->GetName()) > 0 )
 			{
-				tchar *pszTemp = Str_GetTemp();
-				snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_STABLEMASTER_CLAIM_FOLLOWER), pItem->GetName());
-				Speak(pszTemp);
-				return true;
-			}
-
-			pItem->Delete();
-
-			if (IsSetOF(OF_PetSlots))
-			{
-				// update the follower slots because in the FIGURINE the followerslots are not updated
-				const short iFollowerSlots = (short)pPet->GetDefNum("FOLLOWERSLOTS", true, 1);
-				if ( !pCharPlayer->FollowersUpdate(pPet, (maximum(0, iFollowerSlots))) )
+				CChar* pPet = pCharPlayer->Use_Figurine(pItem);
+				if ( !pPet )
 				{
-					// this cannot be happen, if happen maybe is a bug
-					g_Log.Event(LOGL_WARN, "Player: %x has no followerslots for %x when retrieving from stablemaster\n", (dword)pCharPlayer->GetUID(), (dword)pPet->GetUID());
-					pCharPlayer->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_PETSLOTS_TRY_CONTROL));
-					pPet->Delete();
+					tchar *pszTemp = Str_GetTemp();
+					snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_STABLEMASTER_CLAIM_FOLLOWER), pItem->GetName());
+					Speak(pszTemp);
 					return true;
-				}	
-			}
+				}
 
-			++iCount;
+				pItem->Delete();
+
+				if (IsSetOF(OF_PetSlots))
+				{
+					// update the follower slots because in the FIGURINE the followerslots are not updated
+					const short iFollowerSlots = (short)pPet->GetDefNum("FOLLOWERSLOTS", true, 1);
+					if ( !pCharPlayer->FollowersUpdate(pPet, (maximum(0, iFollowerSlots))) )
+					{
+						// this cannot be happen, if happen maybe is a bug
+						g_Log.Event(LOGL_WARN, "Player: %x has no followerslots for %x when retrieving from stablemaster\n", (dword)pCharPlayer->GetUID(), (dword)pPet->GetUID());
+						pCharPlayer->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_PETSLOTS_TRY_CONTROL));
+						pPet->Delete();
+						return true;
+					}	
+				}
+
+				++iCount;
+			}
 		}
 	}
 

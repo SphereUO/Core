@@ -1206,7 +1206,7 @@ private:
 private:
 	static CREID_TYPE NPC_GetAllyGroupType(CREID_TYPE idTest);
 
-	bool NPC_StablePetRetrieve( CChar * pCharPlayer );
+	bool NPC_StablePetRetrieve( CChar * pCharPlayer, lpctstr pszPetName );
 	bool NPC_StablePetSelect( CChar * pCharPlayer );
 
 	int NPC_WantThisItem( CItem * pItem ) const;
