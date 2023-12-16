@@ -45,7 +45,7 @@ BEGIN
 		BLOCK "040904b0"
 		BEGIN
 			VALUE "CompanyName",		"Menasoft"
-			VALUE "FileDescription",	"SphereServer " SPHERE_VER_NAME
+			VALUE "FileDescription",	"SphereUO " SPHERE_VER_NAME
 			VALUE "FileVersion",		SPHERE_BUILD_INFO_GIT_STR
 			VALUE "InternalName",		"SphereSvrX"
 			VALUE "LegalCopyright",		COPYRIGHT_STR

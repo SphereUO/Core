@@ -26,7 +26,7 @@
 
 #define SPHERE_VER_FILEVERSION		1,1,0,SPHERE_BUILD_VER		// version to be set on generated .exe file (Windows only)
 #define SPHERE_VER_ID_STR           "110"                       // to be used for script and server VERSION property, which is numerical
-#define SPHERE_VER_NAME				"X1"						// share version with all files
+#define SPHERE_VER_NAME				"0.1.0"						// share version with all files
 
 #if defined(_PRIVATEBUILD)
 	#define SPHERE_BUILD_TYPE_STR			"-Private"

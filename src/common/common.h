@@ -10,7 +10,7 @@
 #define SPHERE_DEF_PORT			2593
 
 #define SPHERE_FILE				"sphere"	// file name prefix
-#define SPHERE_TITLE			"SphereServer"
+#define SPHERE_TITLE			"SphereUO"
 #define SPHERE_SCRIPT			".scp"
 
 #define SCRIPT_MAX_LINE_LEN		4096		// default size.
