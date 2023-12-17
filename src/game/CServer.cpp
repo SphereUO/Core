@@ -2228,7 +2228,7 @@ bool CServer::Load()
 #ifdef _NIGHTLYBUILD
 	static lpctstr pszNightlyMsg = "\r\n"
 		"-----------------------------------------------------------------\r\n"
-		"This is a nightly build of SphereServer. This build is to be used for testing and/or bug reporting ONLY.\r\n"
+		"This is a nightly build of SphereUO. This build is to be used for testing and/or bug reporting ONLY.\r\n"
 		"DO NOT run this build on a live shard unless you know what you are doing!\r\n"
 		"Nightly builds are automatically made at every commit to the source code repository and might\r\n"
 		"contain errors, might be unstable or even destroy your shard as they are mostly untested!\r\n"

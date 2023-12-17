@@ -22,7 +22,7 @@ jobs:
     - name: CMake 
       run: cmake -G "Visual Studio 17 2022" .\
     - name: MSBuild
-      run: msbuild SphereServer.sln /verbosity:minimal /maxcpucount /p:Configuration=Nightly
+      run: msbuild SphereUO.sln /verbosity:minimal /maxcpucount /p:Configuration=Nightly
     - name: Create package
       run: |
             mkdir accounts, logs, save, scripts
@@ -52,7 +52,7 @@ jobs:
     - name: CMake 
       run: cmake -G "Visual Studio 17 2022" -A Win32 .\
     - name: MSBuild
-      run: msbuild SphereServer.sln /verbosity:minimal /maxcpucount /p:Configuration=Nightly
+      run: msbuild SphereUO.sln /verbosity:minimal /maxcpucount /p:Configuration=Nightly
     - name: Create package
       run:  |
             mkdir accounts, logs, save, scripts

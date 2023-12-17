@@ -23,6 +23,7 @@
 #define IDC_ABOUT_COMPILER              1118
 #define IDC_ABOUT_MENASOFT_LINK         1119
 #define IDC_ABOUT_SPHERE_LINK           1120
+#define IDC_ABOUT_SPHEREUO_LINK         1121
 #define IDC_SETUP_PORT                  4020
 #define IDC_SETUP_SCRIPTS               4021
 #define IDC_SETUP_SAVE                  4022
