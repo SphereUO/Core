@@ -26,7 +26,7 @@ IF ((NOT TOOLCHAIN) AND (NOT ${CMAKE_TOOLCHAIN_FILE} STREQUAL ""))
 ENDIF ()
 
 MESSAGE (STATUS "Scanning system build tools...")
-PROJECT (SphereServer)	# does a scan for C++ and C compilers
+PROJECT (SphereUO)	# does a scan for C++ and C compilers
 
 
 # Determine system arch

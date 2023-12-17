@@ -1,6 +1,6 @@
 version: "3"
 services:
-  sphereserver:
+  sphereuo:
     image: raylde/sphereuo
     pull_policy: always
     container_name: raylde/sphereuo
